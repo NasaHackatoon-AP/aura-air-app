@@ -15,6 +15,7 @@ import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotifi
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
 import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
+import { ThemeToggle } from "@/components/Theme/ThemeToggle/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import {
@@ -25,26 +26,50 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut, Satellite, User, ChevronDown } from "lucide-react";
+import {
+  Settings,
+  LogOut,
+  Satellite,
+  User,
+  ChevronDown,
+  Wind,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
   const { profile } = useUserProfile();
 
+  const handleLogout = () => {
+    try {
+      // Clear mock auth and user data
+      localStorage.removeItem("user");
+      localStorage.removeItem("user-profile");
+      // Optionally clear other app caches if needed in the future
+    } catch (err) {
+      console.error("Erro ao fazer logout:", err);
+    } finally {
+      // Redirect to login
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+      <header className="border-b bg-card relative">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-foreground truncate">
-                AirHealth Monitor
-              </h1>
+              <div className="flex items-center gap-2">
+                <Wind className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-foreground truncate">
+                  Air Aura
+                </h1>
+              </div>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
                 {profile.location}
               </p>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative">
               <Link href="/satellite">
                 <TouchOptimizedButton
                   variant="ghost"
@@ -55,6 +80,9 @@ export default function DashboardPage() {
                   <Satellite className="h-3 w-3 sm:h-5 sm:w-5" />
                 </TouchOptimizedButton>
               </Link>
+
+              {/* Theme Toggle */}
+              <ThemeToggle size="icon" className="h-7 w-7 sm:h-10 sm:w-10" />
 
               {/* User Profile Dropdown */}
               <DropdownMenu>
@@ -72,7 +100,15 @@ export default function DashboardPage() {
                     <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline" />
                   </TouchOptimizedButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 z-50 sm:align-end align-start"
+                  side="bottom"
+                  sideOffset={4}
+                  alignOffset={-8}
+                  avoidCollisions={true}
+                  collisionPadding={16}
+                >
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
@@ -91,7 +127,10 @@ export default function DashboardPage() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer text-red-600">
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600"
+                    onClick={handleLogout}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sair</span>
                   </DropdownMenuItem>

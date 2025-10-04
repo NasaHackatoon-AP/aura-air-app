@@ -43,7 +43,7 @@ export function MobileOptimizedDialog({
           ],
 
           // Otimizações para desktop
-          !isMobile && ["max-w-lg max-h-[80vh]"],
+          !isMobile && ["max-w-lg max-h-[80vh] overflow-y-auto"],
 
           className
         )}

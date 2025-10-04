@@ -20,12 +20,12 @@ export function AlertNotification() {
 
   const getAlertIcon = () => {
     if (hasCriticalAlerts) {
-      return <AlertTriangle className="h-5 w-5 text-red-600" />;
+      return <AlertTriangle className="h-5 w-5 text-destructive" />;
     }
     if (healthAlerts.length > 0) {
-      return <Heart className="h-5 w-5 text-red-500" />;
+      return <Heart className="h-5 w-5 text-primary" />;
     }
-    return <MapPin className="h-5 w-5 text-orange-500" />;
+    return <MapPin className="h-5 w-5 text-primary" />;
   };
 
   const getAlertMessage = () => {
@@ -40,16 +40,18 @@ export function AlertNotification() {
 
   const getAlertColor = () => {
     if (hasCriticalAlerts) {
-      return "border-red-200 bg-red-50";
+      return "border-destructive/40 bg-destructive/10";
     }
-    if (healthAlerts.length > 0) {
-      return "border-red-200 bg-red-50";
-    }
-    return "border-orange-200 bg-orange-50";
+    // Non-critical alerts: use primary accents for harmony
+    return "border-primary/30 bg-primary/5";
   };
 
   return (
-    <Card className={`border-l-4 border-l-orange-500 ${getAlertColor()}`}>
+    <Card
+      className={`border ${getAlertColor()} border-l-4 ${
+        hasCriticalAlerts ? "border-destructive" : "border-primary"
+      }`}
+    >
       <CardContent className="p-3 sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -80,7 +82,7 @@ export function AlertNotification() {
               variant="outline"
               size="sm"
               onClick={showAlerts}
-              className="h-7 sm:h-8 text-xs px-2 sm:px-3"
+              className="h-7 sm:h-8 text-xs px-2 sm:px-3 border-primary/40 text-primary hover:bg-primary/10"
             >
               <Bell className="h-3 w-3 sm:mr-1" />
               <span className="hidden sm:inline">Ver Alertas</span>

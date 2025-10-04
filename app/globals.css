@@ -122,6 +122,41 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Minimal, theme-aware scrollbar for dialogs */
+  [data-slot="dialog-content"] {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
+  [data-slot="dialog-content"]::-webkit-scrollbar {
+    width: 8px;
+  }
+  [data-slot="dialog-content"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  [data-slot="dialog-content"]::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklab, var(--foreground) 28%, transparent);
+    border-radius: 9999px;
+    border: 2px solid transparent; /* creates inner padding */
+    background-clip: content-box;
+  }
+  [data-slot="dialog-content"]:hover::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+  }
+  [data-slot="dialog-content"]::-webkit-scrollbar-thumb:active {
+    background-color: color-mix(in oklab, var(--foreground) 55%, transparent);
+  }
+
+  /* Fix dropdown positioning */
+  [data-radix-popper-content-wrapper] {
+    z-index: 50 !important;
+  }
+
+  [data-radix-dropdown-menu-content] {
+    z-index: 50 !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+
   html {
     /* Previne scroll horizontal no mobile */
     overflow-x: hidden;
