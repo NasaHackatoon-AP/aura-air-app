@@ -14,6 +14,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Air Aura",
   description: "App for monitoring air quality with wind-powered insights",
+  icons: {
+    icon: "/airaurealogo.png",
+    apple: "/airaurealogo.png",
+  },
 };
 
 export default function RootLayout({
