@@ -145,7 +145,7 @@ export default function DashboardPage() {
 
         <AlertNotification />
 
-        {/** <EmergencyTestPanel /> **/}
+        <EmergencyTestPanel />
 
         <HealthAlerts />
 
