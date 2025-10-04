@@ -147,14 +147,35 @@
     background-color: color-mix(in oklab, var(--foreground) 55%, transparent);
   }
 
-  /* Fix dropdown positioning */
+  /* Fix dropdown positioning and prevent layout shifts */
   [data-radix-popper-content-wrapper] {
     z-index: 50 !important;
+    position: fixed !important;
+    pointer-events: none;
   }
 
   [data-radix-dropdown-menu-content] {
     z-index: 50 !important;
     max-width: calc(100vw - 2rem) !important;
+    position: fixed !important;
+    pointer-events: auto;
+    transform-origin: var(
+      --radix-dropdown-menu-content-transform-origin
+    ) !important;
+  }
+
+  /* Prevent horizontal scroll caused by dropdowns */
+  .min-h-screen {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  /* Ensure header doesn't cause layout shifts */
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
   }
 
   html {

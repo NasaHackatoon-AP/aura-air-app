@@ -56,8 +56,8 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card relative">
+    <div className="min-h-screen overflow-x-hidden">
+      <header className="border-b bg-card relative overflow-visible">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
@@ -68,7 +68,7 @@ export default function DashboardPage() {
                 {profile.location}
               </p>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative z-50">
               <Link href="/satellite">
                 <TouchOptimizedButton
                   variant="ghost"
@@ -84,27 +84,27 @@ export default function DashboardPage() {
               <ThemeToggle size="icon" className="h-7 w-7 sm:h-10 sm:w-10" />
 
               {/* User Profile Dropdown */}
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <TouchOptimizedButton
                     variant="ghost"
-                    className="h-7 w-7 sm:h-10 sm:w-auto sm:px-3 gap-1 sm:gap-2"
+                    className="h-8 w-8 sm:h-10 sm:w-auto sm:px-3 gap-2 hover:bg-muted/50 transition-all duration-200"
                   >
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-muted flex items-center justify-center">
-                      <User className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-900 flex items-center justify-center shadow-lg ring-2 ring-white/20 dark:ring-black/20">
+                      <User className="h-3 w-3 sm:h-4 sm:w-4 text-white font-semibold" />
                     </div>
-                    <span className="hidden sm:inline text-sm font-medium">
+                    <span className="hidden sm:inline text-sm font-medium truncate max-w-20">
                       {profile.name}
                     </span>
-                    <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline" />
+                    <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline opacity-70" />
                   </TouchOptimizedButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-56 z-50 sm:align-end align-start"
+                  className="w-56"
                   side="bottom"
-                  sideOffset={4}
-                  alignOffset={-8}
+                  sideOffset={12}
+                  alignOffset={-10}
                   avoidCollisions={true}
                   collisionPadding={16}
                 >
@@ -140,35 +140,25 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-x-hidden">
         <EmergencyNotificationBar radius={100} />
-
         <AlertNotification />
-
-        {/** <EmergencyTestPanel /> **/}
-
+        <EmergencyTestPanel />
         <HealthAlerts />
-
         <WeatherAlerts />
-
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
           <WeatherOverview />
           <HourlyForecast />
         </MobileOptimizedGrid>
-
         <WeatherForecast />
-
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
           <AirQualityIndex />
           <HealthProfile />
         </MobileOptimizedGrid>
-
         <Pollutants />
-
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
           <HealthRecommendations />
         </MobileOptimizedGrid>
-
         <AirQualityHistory />
       </main>
     </div>

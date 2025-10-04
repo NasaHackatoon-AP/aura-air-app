@@ -18,24 +18,24 @@ export function EmergencyTestPanel() {
 
   const testEmergencyAlert = () => {
     emergencyService.createSystemAlert(
-      "🚨 TESTE DE EMERGÊNCIA",
-      "Este é um teste do sistema de alertas de emergência. Em uma situação real, você receberia notificações sobre desastres naturais e riscos à saúde.",
+      "🌪️ Condições Meteorológicas Severas",
+      "Ventos de até 85 km/h e chuva intensa detectados. Evite áreas abertas e mantenha-se em local seguro pelos próximos 45 minutos.",
       "high"
     );
   };
 
   const testCriticalAlert = () => {
     emergencyService.createSystemAlert(
-      "⚠️ ALERTA CRÍTICO DE TESTE",
-      "Simulação de alerta crítico - terremoto detectado na região. Procure abrigo imediatamente!",
+      "🚨 EMERGÊNCIA - Evacuação Imediata",
+      "Atividade sísmica de magnitude 6.1 registrada. Saia do prédio imediatamente, use escadas, dirija-se ao ponto de encontro mais próximo.",
       "critical"
     );
   };
 
   const testHealthAlert = () => {
     emergencyService.createSystemAlert(
-      "🏥 ALERTA DE SAÚDE",
-      "Qualidade do ar crítica detectada. Pessoas com problemas respiratórios devem evitar atividades ao ar livre.",
+      "🫁 Alerta Atmosférico - Ar Perigoso",
+      "IQA atingiu 185 (muito insalubre). Grupos sensíveis devem usar máscaras N95 e evitar atividades externas até nova avaliação.",
       "medium"
     );
   };
