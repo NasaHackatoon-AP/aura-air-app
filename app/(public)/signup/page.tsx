@@ -1,9 +1,15 @@
 import { SignupForm } from "@/components/Authentication/SignupForm/SignupForm";
+import { ThemeToggle } from "@/components/Theme/ThemeToggle/ThemeToggle";
 import { Cloud, Wind } from "lucide-react";
 
 export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+      {/* Theme Toggle Button - Fixed Position */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle size="icon" className="h-10 w-10" />
+      </div>
+
       <div className="w-full max-w-md">
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
