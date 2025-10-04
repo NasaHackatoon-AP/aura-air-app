@@ -21,7 +21,7 @@ export function WallEButton() {
       <Button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50",
+          "fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50",
           "h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg",
           "bg-primary hover:bg-primary/90 text-primary-foreground",
           "transition-all duration-300 hover:scale-110",
