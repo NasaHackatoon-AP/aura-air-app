@@ -6,6 +6,7 @@ import { AlertProvider } from "@/contexts/AlertContext";
 import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
 import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import { MobileOptimizedLayout } from "@/components/Mobile/MobileOptimizedLayout/MobileOptimizedLayout";
+import { WallEButton } from "@/components/Chatbot/WallEButton/WallEButton";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
             {children}
             <AlertWrapper />
             <EmergencyNotificationManager />
+            <WallEButton />
           </AlertProvider>
         </MobileOptimizedLayout>
         <Toaster position="top-right" richColors />
