@@ -11,18 +11,25 @@ import { HealthAlerts } from "@/components/Health/HealthAlerts/HealthAlerts";
 import { HealthProfile } from "@/components/Health/HealthProfile/HealthProfile";
 import { HealthRecommendations } from "@/components/Health/HealthRecommendations/HealthRecommendations";
 import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
-import { EmergencyConfigModal } from "@/components/Emergency/EmergencyConfigModal/EmergencyConfigModal";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
 import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, Satellite, Shield } from "lucide-react";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Settings, LogOut, Satellite, User, ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 export default function DashboardPage() {
-  const [isEmergencyConfigOpen, setIsEmergencyConfigOpen] = useState(false);
+  const { profile } = useUserProfile();
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,7 +41,7 @@ export default function DashboardPage() {
                 AirHealth Monitor
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                São Paulo, Brasil
+                {profile.location}
               </p>
             </div>
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
@@ -48,31 +55,48 @@ export default function DashboardPage() {
                   <Satellite className="h-3 w-3 sm:h-5 sm:w-5" />
                 </TouchOptimizedButton>
               </Link>
-              <TouchOptimizedButton
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsEmergencyConfigOpen(true)}
-                title="Configurações de Emergência"
-                className="h-7 w-7 sm:h-10 sm:w-10"
-              >
-                <Shield className="h-3 w-3 sm:h-5 sm:w-5" />
-              </TouchOptimizedButton>
-              <TouchOptimizedButton
-                variant="ghost"
-                size="icon"
-                title="Configurações"
-                className="h-7 w-7 sm:h-10 sm:w-10"
-              >
-                <Settings className="h-3 w-3 sm:h-5 sm:w-5" />
-              </TouchOptimizedButton>
-              <TouchOptimizedButton
-                variant="ghost"
-                size="icon"
-                title="Sair"
-                className="h-7 w-7 sm:h-10 sm:w-10"
-              >
-                <LogOut className="h-3 w-3 sm:h-5 sm:w-5" />
-              </TouchOptimizedButton>
+
+              {/* User Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <TouchOptimizedButton
+                    variant="ghost"
+                    className="h-7 w-7 sm:h-10 sm:w-auto sm:px-3 gap-1 sm:gap-2"
+                  >
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-muted flex items-center justify-center">
+                      <User className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </div>
+                    <span className="hidden sm:inline text-sm font-medium">
+                      {profile.name}
+                    </span>
+                    <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline" />
+                  </TouchOptimizedButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {profile.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {profile.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Configurações</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sair</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -109,12 +133,6 @@ export default function DashboardPage() {
 
         <AirQualityHistory />
       </main>
-
-      {/* Modal de Configurações de Emergência */}
-      <EmergencyConfigModal
-        isOpen={isEmergencyConfigOpen}
-        onClose={() => setIsEmergencyConfigOpen(false)}
-      />
     </div>
   );
 }

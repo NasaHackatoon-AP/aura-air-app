@@ -6,6 +6,7 @@ import { AlertProvider } from "@/contexts/AlertContext";
 import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
 import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import { MobileOptimizedLayout } from "@/components/Mobile/MobileOptimizedLayout/MobileOptimizedLayout";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
             <EmergencyNotificationManager />
           </AlertProvider>
         </MobileOptimizedLayout>
+        <Toaster position="top-right" richColors />
         <Analytics />
       </body>
     </html>
