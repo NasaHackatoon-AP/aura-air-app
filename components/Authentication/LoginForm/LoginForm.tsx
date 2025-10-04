@@ -73,10 +73,10 @@ export function LoginForm() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Entrar</CardTitle>
-        <CardDescription>
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl sm:text-2xl">Entrar</CardTitle>
+        <CardDescription className="text-sm">
           Entre com suas credenciais para acessar sua conta
         </CardDescription>
       </CardHeader>
@@ -111,8 +111,12 @@ export function LoginForm() {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+        <CardFooter className="flex flex-col gap-3 sm:gap-4">
+          <Button
+            type="submit"
+            className="w-full text-sm sm:text-base"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -122,7 +126,7 @@ export function LoginForm() {
               "Entrar"
             )}
           </Button>
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center">
             Não tem uma conta?{" "}
             <Link href="/signup" className="text-primary hover:underline">
               Criar conta
