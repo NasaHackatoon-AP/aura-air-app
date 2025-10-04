@@ -12,7 +12,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Air Aurea",
+  title: "Air Aura",
   description: "App for monitoring air quality with wind-powered insights",
   icons: {
     icon: "/airaurealogo.png",
