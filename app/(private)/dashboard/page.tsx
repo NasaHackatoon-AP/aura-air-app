@@ -14,6 +14,8 @@ import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/Em
 import { EmergencyConfigModal } from "@/components/Emergency/EmergencyConfigModal/EmergencyConfigModal";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
+import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
+import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut, Satellite, Shield } from "lucide-react";
 import Link from "next/link";
@@ -25,42 +27,58 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              AirHealth Monitor
-            </h1>
-            <p className="text-sm text-muted-foreground">São Paulo, Brasil</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/satellite">
-              <Button
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-foreground truncate">
+                AirHealth Monitor
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                São Paulo, Brasil
+              </p>
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <Link href="/satellite">
+                <TouchOptimizedButton
+                  variant="ghost"
+                  size="icon"
+                  title="Visualização por Satélite"
+                  className="h-7 w-7 sm:h-10 sm:w-10"
+                >
+                  <Satellite className="h-3 w-3 sm:h-5 sm:w-5" />
+                </TouchOptimizedButton>
+              </Link>
+              <TouchOptimizedButton
                 variant="ghost"
                 size="icon"
-                title="Visualização por Satélite"
+                onClick={() => setIsEmergencyConfigOpen(true)}
+                title="Configurações de Emergência"
+                className="h-7 w-7 sm:h-10 sm:w-10"
               >
-                <Satellite className="h-5 w-5" />
-              </Button>
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsEmergencyConfigOpen(true)}
-              title="Configurações de Emergência"
-            >
-              <Shield className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" title="Configurações">
-              <Settings className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" title="Sair">
-              <LogOut className="h-5 w-5" />
-            </Button>
+                <Shield className="h-3 w-3 sm:h-5 sm:w-5" />
+              </TouchOptimizedButton>
+              <TouchOptimizedButton
+                variant="ghost"
+                size="icon"
+                title="Configurações"
+                className="h-7 w-7 sm:h-10 sm:w-10"
+              >
+                <Settings className="h-3 w-3 sm:h-5 sm:w-5" />
+              </TouchOptimizedButton>
+              <TouchOptimizedButton
+                variant="ghost"
+                size="icon"
+                title="Sair"
+                className="h-7 w-7 sm:h-10 sm:w-10"
+              >
+                <LogOut className="h-3 w-3 sm:h-5 sm:w-5" />
+              </TouchOptimizedButton>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6 space-y-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         <EmergencyNotificationBar radius={100} />
 
         <AlertNotification />
@@ -71,23 +89,23 @@ export default function DashboardPage() {
 
         <WeatherAlerts />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
           <WeatherOverview />
           <HourlyForecast />
-        </div>
+        </MobileOptimizedGrid>
 
         <WeatherForecast />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
           <AirQualityIndex />
           <HealthProfile />
-        </div>
+        </MobileOptimizedGrid>
 
         <Pollutants />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
           <HealthRecommendations />
-        </div>
+        </MobileOptimizedGrid>
 
         <AirQualityHistory />
       </main>

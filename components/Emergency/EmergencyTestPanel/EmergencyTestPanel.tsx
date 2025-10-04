@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import {
   Card,
   CardContent,
@@ -72,7 +72,7 @@ export function EmergencyTestPanel() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <Button
+          <TouchOptimizedButton
             onClick={testEmergencyAlert}
             variant="outline"
             className="h-16 sm:h-20 flex flex-col gap-1 sm:gap-2 text-xs sm:text-sm"
@@ -80,9 +80,9 @@ export function EmergencyTestPanel() {
             <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">Teste Alerta Normal</span>
             <span className="sm:hidden">Alerta Normal</span>
-          </Button>
+          </TouchOptimizedButton>
 
-          <Button
+          <TouchOptimizedButton
             onClick={testCriticalAlert}
             variant="destructive"
             className="h-16 sm:h-20 flex flex-col gap-1 sm:gap-2 text-xs sm:text-sm"
@@ -90,9 +90,9 @@ export function EmergencyTestPanel() {
             <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">Teste Alerta Crítico</span>
             <span className="sm:hidden">Alerta Crítico</span>
-          </Button>
+          </TouchOptimizedButton>
 
-          <Button
+          <TouchOptimizedButton
             onClick={testHealthAlert}
             variant="outline"
             className="h-16 sm:h-20 flex flex-col gap-1 sm:gap-2 text-xs sm:text-sm"
@@ -100,9 +100,9 @@ export function EmergencyTestPanel() {
             <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">Teste Alerta de Saúde</span>
             <span className="sm:hidden">Alerta Saúde</span>
-          </Button>
+          </TouchOptimizedButton>
 
-          <Button
+          <TouchOptimizedButton
             onClick={toggleMonitoring}
             variant={isMonitoring ? "destructive" : "default"}
             className="h-16 sm:h-20 flex flex-col gap-1 sm:gap-2 text-xs sm:text-sm"
@@ -114,12 +114,12 @@ export function EmergencyTestPanel() {
             <span className="sm:hidden">
               {isMonitoring ? "Parar" : "Iniciar"}
             </span>
-          </Button>
+          </TouchOptimizedButton>
         </div>
 
         <div className="mt-6 p-4 bg-muted rounded-lg">
-          <h4 className="font-semibold mb-2">Como funciona:</h4>
-          <ul className="text-sm space-y-1 text-muted-foreground">
+          <h4 className="font-semibold mb-2 text-base">Como funciona:</h4>
+          <ul className="text-base space-y-1 text-muted-foreground">
             <li>
               • <strong>Alertas Normais:</strong> Aparecem como toast no canto
               superior direito
@@ -144,7 +144,7 @@ export function EmergencyTestPanel() {
         </div>
 
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+          <p className="text-base text-blue-800">
             <strong>💡 Dica:</strong> Para testar notificações push, permita
             notificações no navegador quando solicitado.
           </p>

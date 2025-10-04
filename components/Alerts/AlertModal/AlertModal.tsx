@@ -11,13 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { MobileOptimizedDialog } from "@/components/Mobile/MobileOptimizedDialog/MobileOptimizedDialog";
 import { Separator } from "@/components/ui/separator";
 import { AlertTriangle, MapPin, Clock, Shield, Heart, X } from "lucide-react";
 import { DisasterAlert, HealthRiskAlert } from "@/types/alerts";
@@ -251,77 +245,68 @@ export function AlertModal({
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xs sm:max-w-lg md:max-w-2xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto mx-2 sm:mx-0">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-            <span className="hidden sm:inline">Alertas de Segurança</span>
-            <span className="sm:hidden">Alertas</span>
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            Alertas importantes sobre desastres naturais e riscos à sua saúde na
-            sua região
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {disasterAlerts.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Desastres Naturais ({disasterAlerts.length})
-              </h3>
-              <div className="space-y-3">
-                {disasterAlerts.map((alert) => (
-                  <DisasterAlertCard
-                    key={alert.id}
-                    alert={alert}
-                    onDismiss={onDismiss}
-                  />
-                ))}
-              </div>
+    <MobileOptimizedDialog
+      open={isOpen}
+      onOpenChange={onClose}
+      title="Alertas de Segurança"
+      description="Alertas importantes sobre desastres naturais e riscos à sua saúde na sua região"
+    >
+      <div className="space-y-4">
+        {disasterAlerts.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Desastres Naturais ({disasterAlerts.length})
+            </h3>
+            <div className="space-y-3">
+              {disasterAlerts.map((alert) => (
+                <DisasterAlertCard
+                  key={alert.id}
+                  alert={alert}
+                  onDismiss={onDismiss}
+                />
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {healthAlerts.length > 0 && (
-            <div>
-              {disasterAlerts.length > 0 && <Separator className="my-6" />}
-              <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                Riscos à Saúde ({healthAlerts.length})
-              </h3>
-              <div className="space-y-3">
-                {healthAlerts.map((alert) => (
-                  <HealthRiskAlertCard
-                    key={alert.id}
-                    alert={alert}
-                    onDismiss={onDismiss}
-                  />
-                ))}
-              </div>
+        {healthAlerts.length > 0 && (
+          <div>
+            {disasterAlerts.length > 0 && <Separator className="my-6" />}
+            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              Riscos à Saúde ({healthAlerts.length})
+            </h3>
+            <div className="space-y-3">
+              {healthAlerts.map((alert) => (
+                <HealthRiskAlertCard
+                  key={alert.id}
+                  alert={alert}
+                  onDismiss={onDismiss}
+                />
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {alerts.length === 0 && (
-            <div className="text-center py-8">
-              <Shield className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-green-700">
-                Nenhum alerta ativo
-              </h3>
-              <p className="text-muted-foreground">
-                Sua região está segura no momento!
-              </p>
-            </div>
-          )}
-        </div>
+        {alerts.length === 0 && (
+          <div className="text-center py-8">
+            <Shield className="h-12 w-12 text-green-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-green-700">
+              Nenhum alerta ativo
+            </h3>
+            <p className="text-muted-foreground">
+              Sua região está segura no momento!
+            </p>
+          </div>
+        )}
+      </div>
 
-        <div className="flex justify-end pt-4">
-          <Button onClick={onClose} variant="outline">
-            Fechar
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <div className="flex justify-end pt-4">
+        <Button onClick={onClose} variant="outline">
+          Fechar
+        </Button>
+      </div>
+    </MobileOptimizedDialog>
   );
 }
