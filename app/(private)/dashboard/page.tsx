@@ -35,6 +35,8 @@ import {
   Wind,
 } from "lucide-react";
 import Link from "next/link";
+import logo from "../../../public/airaurealogo.png";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { profile } = useUserProfile();
@@ -60,10 +62,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <Wind className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-foreground truncate">
-                  Air Aura
-                </h1>
+                <Image src={logo} alt="Air Aura Logo" className="h-15 w-15" />
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
                 {profile.location}
@@ -146,7 +145,7 @@ export default function DashboardPage() {
 
         <AlertNotification />
 
-        <EmergencyTestPanel />
+        {/** <EmergencyTestPanel /> **/}
 
         <HealthAlerts />
 
