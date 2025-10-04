@@ -143,7 +143,9 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-x-hidden">
         <EmergencyNotificationBar radius={100} />
         <AlertNotification />
+
         <EmergencyTestPanel />
+        
         <HealthAlerts />
         <WeatherAlerts />
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
