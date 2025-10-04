@@ -25,6 +25,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
+import { ThemeToggle } from "@/components/Theme/ThemeToggle/ThemeToggle";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { emergencyService } from "@/services/emergencyService";
@@ -106,6 +107,7 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
+            <ThemeToggle size="icon" className="h-8 w-8" />
           </div>
         </div>
       </header>

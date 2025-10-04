@@ -11,7 +11,7 @@ export default function LoginPage() {
             <Wind className="h-6 w-6 sm:h-8 sm:w-8 text-secondary" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-            AirHealth Monitor
+            Air Aura
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground px-4">
             Monitoramento inteligente do clima e qualidade do ar

@@ -7,12 +7,13 @@ import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
 import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import { MobileOptimizedLayout } from "@/components/Mobile/MobileOptimizedLayout/MobileOptimizedLayout";
 import { WallEButton } from "@/components/Chatbot/WallEButton/WallEButton";
+import { Wind } from "lucide-react";
 import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Air Aura",
-  description: "App for monitoring air quality",
+  description: "App for monitoring air quality with wind-powered insights",
 };
 
 export default function RootLayout({
