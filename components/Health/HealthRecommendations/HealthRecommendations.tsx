@@ -57,7 +57,7 @@ const statusConfig = {
 
 export function HealthRecommendations() {
   return (
-    <Card className="col-span-full lg:col-span-2">
+    <Card className="col-span-full">
       <CardHeader>
         <CardTitle>Recomendações de Atividades</CardTitle>
       </CardHeader>

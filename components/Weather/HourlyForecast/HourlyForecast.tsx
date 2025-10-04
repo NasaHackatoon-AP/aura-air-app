@@ -30,7 +30,7 @@ const iconMap = {
 
 export function HourlyForecast() {
   return (
-    <Card className="col-span-full lg:col-span-2">
+    <Card className="col-span-full">
       <CardHeader>
         <CardTitle>Previsão Horária</CardTitle>
       </CardHeader>

@@ -29,7 +29,7 @@ export function WeatherOverview() {
   const data = mockWeatherData;
 
   return (
-    <Card className="col-span-full lg:col-span-2">
+    <Card className="col-span-full">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
           <Cloud className="h-4 w-4 sm:h-5 sm:w-5" />

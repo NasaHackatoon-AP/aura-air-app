@@ -48,14 +48,8 @@ export function LoginForm() {
           country: "Brasil",
         };
 
-        // Mock health conditions based on email (for demo purposes)
-        const healthConditions = email.includes("asthma")
-          ? ["asthma"]
-          : email.includes("copd")
-          ? ["copd"]
-          : email.includes("heart")
-          ? ["heart-disease"]
-          : [];
+        // Disable email-based test conditions (always empty)
+        const healthConditions: string[] = [];
 
         // Login user and load alerts
         await loginUser(userLocation, healthConditions);
@@ -73,7 +67,10 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card
+      className="w-full shadow-xl border border-border/50 bg-card/95 backdrop-blur-sm rounded-xl"
+      data-preserve-width
+    >
       <CardHeader className="pb-4">
         <CardTitle className="text-xl sm:text-2xl">Entrar</CardTitle>
         <CardDescription className="text-sm">
@@ -111,6 +108,7 @@ export function LoginForm() {
             />
           </div>
         </CardContent>
+        <br />
         <CardFooter className="flex flex-col gap-3 sm:gap-4">
           <Button
             type="submit"

@@ -20,12 +20,12 @@ export function MobileOptimizedLayout({
       document.body.style.overflowX = "hidden";
       document.documentElement.style.overflowX = "hidden";
 
-      // Previne scroll horizontal em todos os elementos
-      const allElements = document.querySelectorAll("*");
-      allElements.forEach((element) => {
+      // Previne scroll horizontal apenas em elementos que podem causar overflow
+      const potentialOverflowElements = document.querySelectorAll("img, video, iframe, table, pre, code");
+      potentialOverflowElements.forEach((element) => {
         const htmlElement = element as HTMLElement;
-        if (htmlElement.style) {
-          htmlElement.style.maxWidth = "100vw";
+        if (htmlElement.style && !htmlElement.closest('[data-preserve-width]')) {
+          htmlElement.style.maxWidth = "100%";
         }
       });
     };
