@@ -1,47 +1,84 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2 } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAlerts } from "@/contexts/AlertContext";
 
 export function LoginForm() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const { loginUser } = useAlerts();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-    // Mock authentication - replace with real API call
-    setTimeout(() => {
+    try {
+      // Mock authentication - replace with real API call
       if (email && password) {
         // Simulate successful login
-        localStorage.setItem("user", JSON.stringify({ email }))
-        router.push("/dashboard")
+        localStorage.setItem("user", JSON.stringify({ email }));
+
+        // Mock user location (São Paulo) and health conditions
+        const userLocation = {
+          latitude: -23.5505,
+          longitude: -46.6333,
+          city: "São Paulo",
+          state: "SP",
+          country: "Brasil",
+        };
+
+        // Mock health conditions based on email (for demo purposes)
+        const healthConditions = email.includes("asthma")
+          ? ["asthma"]
+          : email.includes("copd")
+          ? ["copd"]
+          : email.includes("heart")
+          ? ["heart-disease"]
+          : [];
+
+        // Login user and load alerts
+        await loginUser(userLocation, healthConditions);
+
+        router.push("/dashboard");
       } else {
-        setError("Por favor, preencha todos os campos")
-        setIsLoading(false)
+        setError("Por favor, preencha todos os campos");
+        setIsLoading(false);
       }
-    }, 1000)
-  }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      setError("Erro ao fazer login. Tente novamente.");
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Entrar</CardTitle>
-        <CardDescription>Entre com suas credenciais para acessar sua conta</CardDescription>
+        <CardDescription>
+          Entre com suas credenciais para acessar sua conta
+        </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
@@ -94,5 +131,5 @@ export function LoginForm() {
         </CardFooter>
       </form>
     </Card>
-  )
+  );
 }

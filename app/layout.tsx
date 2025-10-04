@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
+import { AlertProvider } from "@/contexts/AlertContext";
+import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
+import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,9 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
+        <AlertProvider>
+          {children}
+          <AlertWrapper />
+          <EmergencyNotificationManager />
+        </AlertProvider>
         <Analytics />
       </body>
     </html>
