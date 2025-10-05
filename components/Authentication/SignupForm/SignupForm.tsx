@@ -22,6 +22,14 @@ import { AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createUser } from "@/services/serviceUser"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { useBrazilLocation } from "@/hooks/useBrazilLocation"
 // HealthConditionSelector removed per request; added dateOfBirth, city, state fields instead
 
 export function SignupForm() {
@@ -39,6 +47,15 @@ export function SignupForm() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [selectedState, setSelectedState] = useState("")
+  
+  const { states, cities, loadingStates, loadCitiesByState } = useBrazilLocation()
+
+  const handleStateChange = (stateCode: string) => {
+    setSelectedState(stateCode)
+    setFormData({ ...formData, state: stateCode, city: "" }) // Reset city when state changes
+    loadCitiesByState(stateCode)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -183,26 +200,43 @@ export function SignupForm() {
               />
             </div>
             <div className="space-y-2 sm:col-span-1">
-              <Label htmlFor="city">Cidade</Label>
-              <Input
-                id="city"
-                type="text"
-                placeholder="São Paulo"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                required
-              />
+              <Label htmlFor="state">Estado</Label>
+              <Select value={selectedState} onValueChange={handleStateChange} required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={loadingStates ? "Carregando estados..." : "Selecione o estado"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {states.map((state) => (
+                    <SelectItem key={state.sigla} value={state.sigla}>
+                      {state.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2 sm:col-span-1">
-              <Label htmlFor="state">Estado</Label>
-              <Input
-                id="state"
-                type="text"
-                placeholder="SP"
-                value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+              <Label htmlFor="city">Cidade</Label>
+              <Select 
+                value={formData.city} 
+                onValueChange={(city) => setFormData({ ...formData, city })}
+                disabled={!selectedState || loadingStates}
                 required
-              />
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={
+                    loadingStates ? "Carregando..." :
+                    !selectedState ? "Primeiro selecione um estado" :
+                    "Selecione a cidade"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={city.nome}>
+                      {city.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
