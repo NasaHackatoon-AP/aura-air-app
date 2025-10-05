@@ -19,14 +19,26 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAlerts } from "@/contexts/AlertContext";
+import { loginUser as loginService } from "@/services/serviceUser";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 export function LoginForm() {
   const router = useRouter();
-  const { loginUser } = useAlerts();
+  const { loginUser: alertsLoginUser } = useAlerts();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,34 +46,40 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      // Mock authentication - replace with real API call
-      if (email && password) {
-        // Simulate successful login
-        localStorage.setItem("user", JSON.stringify({ email }));
-
-        // Mock user location (São Paulo) and health conditions
-        const userLocation = {
-          latitude: -23.5505,
-          longitude: -46.6333,
-          city: "São Paulo",
-          state: "SP",
-          country: "Brasil",
-        };
-
-        // Disable email-based test conditions (always empty)
-        const healthConditions: string[] = [];
-
-        // Login user and load alerts
-        await loginUser(userLocation, healthConditions);
-
-        router.push("/dashboard");
-      } else {
+      if (!email || !password) {
         setError("Por favor, preencha todos os campos");
         setIsLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error("Erro no login:", error);
-      setError("Erro ao fazer login. Tente novamente.");
+
+  const res = await loginService({ email, senha: password });
+
+  // Expecting { access_token, token_type, usuario }
+  const token = (res as any)?.data?.access_token;
+      if (token) {
+        // Save token for API calls
+        localStorage.setItem('token', token);
+        // set a cookie so middleware can read it (not HttpOnly)
+        document.cookie = `access_token=${token}; path=/; samesite=lax`;
+
+
+        // Optionally call alerts flow from context if available
+        try {
+          const userLocation = { latitude: -23.5505, longitude: -46.6333, city: 'São Paulo', state: 'SP', country: 'Brasil' };
+          const healthConditions: string[] = [];
+          if (alertsLoginUser) await alertsLoginUser(userLocation, healthConditions);
+        } catch (e) {
+          // ignore if alerts context not available
+        }
+
+        router.push('/dashboard');
+      } else {
+        setIsErrorDialogOpen(true);
+      }
+    } catch (err: any) {
+      console.error('Erro no login:', err);
+      // Show modal with incorrect credentials message
+      setIsErrorDialogOpen(true);
       setIsLoading(false);
     }
   };
@@ -84,6 +102,22 @@ export function LoginForm() {
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+
+          {isErrorDialogOpen && (
+            <AlertDialog open={isErrorDialogOpen} onOpenChange={(open) => setIsErrorDialogOpen(open)}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Erro ao entrar</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Usuário ou senha incorretos. Verifique suas credenciais e tente novamente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setIsErrorDialogOpen(false)}>Fechar</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
