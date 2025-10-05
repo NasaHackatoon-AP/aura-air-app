@@ -10,6 +10,7 @@ import { WallEButton } from "@/components/Chatbot/WallEButton/WallEButton";
 import { Wind } from "lucide-react";
 import { Toaster } from "sonner";
 import "./globals.css";
+import "../styles/chatbot.css";
 
 export const metadata: Metadata = {
   title: "Air Aura",
