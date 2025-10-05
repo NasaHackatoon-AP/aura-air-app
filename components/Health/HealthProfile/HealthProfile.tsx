@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,17 +11,39 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Edit } from "lucide-react";
+import { MobileOptimizedDialog } from "@/components/Mobile/MobileOptimizedDialog/MobileOptimizedDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAlerts } from "@/contexts/AlertContext";
 
 interface UserHealthProfile {
   hasCondition: boolean;
-  condition?: string;
+  conditionId?: string;
   riskLevel: "low" | "moderate" | "high";
   sensitivePollutants: string[];
 }
 
+const HEALTH_STORAGE_KEY = "user-health-condition";
+const NO_CONDITION_VALUE = "none";
+
+const healthOptions = [
+  { id: "asthma", label: "Asma" },
+  { id: "copd", label: "DPOC" },
+  { id: "heart-disease", label: "Doença Cardíaca" },
+  { id: "diabetes", label: "Diabetes" },
+];
+
+const getLabelForCondition = (id?: string) =>
+  healthOptions.find((o) => o.id === id)?.label ?? "";
+
 const mockProfile: UserHealthProfile = {
   hasCondition: true,
-  condition: "Asma",
+  conditionId: "asthma",
   riskLevel: "moderate",
   sensitivePollutants: ["PM2.5", "PM10", "O₃"],
 };
@@ -38,6 +61,66 @@ const riskLabels = {
 };
 
 export function HealthProfile() {
+  const { updateHealthConditions } = useAlerts();
+
+  const [profile, setProfile] = useState<UserHealthProfile>(mockProfile);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCondition, setSelectedCondition] = useState<string>(
+    mockProfile.conditionId ?? NO_CONDITION_VALUE
+  );
+
+  // Carrega condição salva
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(HEALTH_STORAGE_KEY);
+      if (saved !== null) {
+        const conditionId = saved || NO_CONDITION_VALUE;
+        setProfile((prev) => ({
+          ...prev,
+          hasCondition: conditionId !== NO_CONDITION_VALUE,
+          conditionId:
+            conditionId === NO_CONDITION_VALUE ? undefined : conditionId,
+        }));
+        setSelectedCondition(conditionId);
+      }
+    } catch (e) {
+      // noop
+    }
+  }, []);
+
+  const conditionLabel = useMemo(
+    () => getLabelForCondition(profile.conditionId),
+    [profile.conditionId]
+  );
+
+  const handleOpenDialog = () => setIsDialogOpen(true);
+  const handleCloseDialog = () => setIsDialogOpen(false);
+
+  const handleSave = async () => {
+    try {
+      // Persistência local
+      if (selectedCondition === NO_CONDITION_VALUE) {
+        localStorage.removeItem(HEALTH_STORAGE_KEY);
+        setProfile((p) => ({
+          ...p,
+          hasCondition: false,
+          conditionId: undefined,
+        }));
+        await updateHealthConditions([]);
+      } else {
+        localStorage.setItem(HEALTH_STORAGE_KEY, selectedCondition);
+        setProfile((p) => ({
+          ...p,
+          hasCondition: true,
+          conditionId: selectedCondition,
+        }));
+        await updateHealthConditions([selectedCondition]);
+      }
+    } finally {
+      handleCloseDialog();
+    }
+  };
+
   return (
     <Card className="col-span-full lg:col-span-1">
       <CardHeader className="pb-4">
@@ -51,14 +134,14 @@ export function HealthProfile() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 sm:space-y-4">
-        {mockProfile.hasCondition ? (
+        {profile.hasCondition ? (
           <>
             <div>
               <p className="text-sm sm:text-sm text-muted-foreground mb-2">
                 Condição
               </p>
               <Badge variant="outline" className="text-base sm:text-base">
-                {mockProfile.condition}
+                {conditionLabel}
               </Badge>
             </div>
 
@@ -68,10 +151,10 @@ export function HealthProfile() {
               </p>
               <Badge
                 className={`${
-                  riskColors[mockProfile.riskLevel]
+                  riskColors[profile.riskLevel]
                 } text-base sm:text-base`}
               >
-                {riskLabels[mockProfile.riskLevel]}
+                {riskLabels[profile.riskLevel]}
               </Badge>
             </div>
 
@@ -80,7 +163,7 @@ export function HealthProfile() {
                 Poluentes Sensíveis
               </p>
               <div className="flex flex-wrap gap-1 sm:gap-2">
-                {mockProfile.sensitivePollutants.map((pollutant) => (
+                {profile.sensitivePollutants.map((pollutant) => (
                   <Badge
                     key={pollutant}
                     variant="secondary"
@@ -95,6 +178,7 @@ export function HealthProfile() {
             <Button
               variant="outline"
               className="w-full mt-3 sm:mt-4 bg-transparent text-base sm:text-base"
+              onClick={handleOpenDialog}
             >
               <Edit className="h-4 w-4 sm:h-4 sm:w-4 mr-2" />
               <span className="hidden sm:inline">Editar Perfil</span>
@@ -109,6 +193,7 @@ export function HealthProfile() {
             <Button
               variant="outline"
               className="w-full bg-transparent text-base sm:text-base"
+              onClick={handleOpenDialog}
             >
               <Heart className="h-4 w-4 sm:h-4 sm:w-4 mr-2" />
               <span className="hidden sm:inline">Adicionar Condição</span>
@@ -117,6 +202,40 @@ export function HealthProfile() {
           </div>
         )}
       </CardContent>
+
+      {/* Dialog para selecionar condição de saúde */}
+      <MobileOptimizedDialog
+        open={isDialogOpen}
+        onOpenChange={(open) => setIsDialogOpen(open)}
+        title="Condição de Saúde"
+        description="Escolha sua condição para receber alertas personalizados"
+      >
+        <div className="space-y-3">
+          <Select
+            value={selectedCondition}
+            onValueChange={(v) => setSelectedCondition(v)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione sua condição" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_CONDITION_VALUE}>Sem condição</SelectItem>
+              {healthOptions.map((opt) => (
+                <SelectItem key={opt.id} value={opt.id}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="flex justify-end gap-2 pt-1">
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave}>Salvar</Button>
+          </div>
+        </div>
+      </MobileOptimizedDialog>
     </Card>
   );
 }
