@@ -21,7 +21,7 @@ export default function SatellitePage() {
             </Button>
           </Link>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-            Visualização de Satélites
+            Visualização de Dados de cidades e satélites
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
             Imagens e dados em tempo real da NASA
