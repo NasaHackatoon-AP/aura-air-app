@@ -11,7 +11,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { HealthConditionSelector } from "./HealthConditionSelector/HealthConditionSelector"
+import { createUser } from "@/services/serviceUser"
+// HealthConditionSelector removed per request; added dateOfBirth, city, state fields instead
 
 export function SignupForm() {
   const router = useRouter()
@@ -20,37 +21,62 @@ export function SignupForm() {
     username: "",
     email: "",
     password: "",
-    hasCondition: false,
-    conditionCategory: "",
+    dateOfBirth: "",
+    city: "",
+    state: "",
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
 
-    // Mock registration - replace with real API call using bcrypt on backend
-    setTimeout(() => {
-      if (formData.name && formData.email && formData.password) {
-        // Simulate successful registration
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            username: formData.username,
-            hasCondition: formData.hasCondition,
-            conditionCategory: formData.conditionCategory,
-          }),
-        )
-        router.push("/dashboard")
-      } else {
+    try {
+      // basic client-side validation
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.password ||
+        !formData.dateOfBirth ||
+        !formData.city ||
+        !formData.state
+      ) {
         setError("Por favor, preencha todos os campos obrigatórios")
         setIsLoading(false)
+        return
       }
-    }, 1000)
+
+      const payload = {
+        nome: formData.name,
+        email: formData.email,
+        senha: formData.password,
+        data_nascimento: formData.dateOfBirth,
+        cidade: formData.city,
+        estado: formData.state,
+      }
+
+      // debug: log payload and endpoint
+      try {
+        // @ts-ignore - for debug only
+        console.debug("createUser payload:", payload)
+      } catch (e) {}
+
+      await createUser(payload)
+  // Only create the user — do not redirect or persist
+  setSuccess("Usuário criado com sucesso")
+  setIsLoading(false)
+    } catch (err: any) {
+      // Try to show server-provided message or a generic one
+      const status = err?.response?.status
+      const respData = err?.response?.data
+      console.error("createUser error status:", status, "data:", respData)
+      const message = respData?.message || respData || err?.message || "Erro ao cadastrar usuário"
+      setError(String(message))
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -61,6 +87,11 @@ export function SignupForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
+          {success && (
+            <Alert>
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          )}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -111,13 +142,42 @@ export function SignupForm() {
               required
             />
           </div>
-          <HealthConditionSelector
-            hasCondition={formData.hasCondition}
-            conditionCategory={formData.conditionCategory}
-            onConditionChange={(hasCondition) => setFormData({ ...formData, hasCondition })}
-            onCategoryChange={(conditionCategory) => setFormData({ ...formData, conditionCategory })}
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
+              <Input
+                id="dateOfBirth"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-1">
+              <Label htmlFor="city">Cidade</Label>
+              <Input
+                id="city"
+                type="text"
+                placeholder="São Paulo"
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-1">
+              <Label htmlFor="state">Estado</Label>
+              <Input
+                id="state"
+                type="text"
+                placeholder="SP"
+                value={formData.state}
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                required
+              />
+            </div>
+          </div>
         </CardContent>
+        <br />
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
