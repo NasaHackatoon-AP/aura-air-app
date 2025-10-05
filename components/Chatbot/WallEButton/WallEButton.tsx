@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X, Bot } from "lucide-react";
@@ -9,6 +9,11 @@ import chatbotService from "@/services/chatbotService";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function WallEButton() {
+  const pathname = usePathname();
+
+  // Hide chatbot on login/signup pages
+  if (pathname === "/login" || pathname === "/signup") return null;
+
   const [isOpen, setIsOpen] = useState(false);
   const [texto, setTexto] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,18 +26,39 @@ export function WallEButton() {
     },
   ]);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const pathname = usePathname();
 
-  // Hide chatbot on login/signup pages
-  if (pathname === "/login" || pathname === "/signup") return null;
+  // Efeito para scroll automático sempre que as mensagens mudarem
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [messages]);
+
+  // Efeito para scroll automático quando o chat for aberto
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => scrollToBottom(), 300);
+    }
+  }, [isOpen]);
+
+  // Efeito para scroll automático quando o loading state mudar (bot digitando)
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [loading]);
 
   async function handleSend() {
     const text = texto.trim();
-    if (!text) return;
+    if (!text || loading) return; // Evita execução se já estiver carregando
 
+    // Adiciona a mensagem do usuário ao estado
     setMessages((prev) => [...prev, { from: "user", text }]);
     setTexto("");
     setLoading(true);
+
+    // Scroll imediato para mostrar a mensagem do usuário
+    setTimeout(() => scrollToBottom(), 50);
 
     try {
       const res = await chatbotService.sendMessage({ texto: text });
@@ -47,19 +73,16 @@ export function WallEButton() {
       await new Promise((resolve) =>
         setTimeout(resolve, baseDelay + textDelay + randomDelay)
       );
-      if (res && Array.isArray(res.historico) && res.historico.length > 0) {
-        const histMsgs: Array<{ from: "user" | "bot"; text: string }> = [];
-        res.historico.forEach((h: any) => {
-          if (h.usuario) histMsgs.push({ from: "user", text: h.usuario });
-          if (h.bot) histMsgs.push({ from: "bot", text: h.bot });
-        });
-        setMessages((prev) => [...prev, ...histMsgs]);
-      } else if (res && (res.resposta || typeof res === "string")) {
+
+      // Processa a resposta - apenas adiciona a resposta do bot, não o histórico completo
+      if (res && (res.resposta || typeof res === "string")) {
         const botText = typeof res === "string" ? res : res.resposta;
-        // avoid appending duplicate bot message if it's already the last one
+
         setMessages((prev) => {
+          // Verifica se a última mensagem já é a mesma resposta do bot para evitar duplicação
           const last = prev[prev.length - 1];
           if (last && last.from === "bot" && last.text === botText) return prev;
+
           return [...prev, { from: "bot", text: botText }];
         });
       }
@@ -78,13 +101,19 @@ export function WallEButton() {
       ]);
     } finally {
       setLoading(false);
-      setTimeout(() => scrollToBottom(), 50);
+      // Garantir que o scroll aconteça após a renderização da resposta
+      setTimeout(() => scrollToBottom(), 100);
     }
   }
 
   function scrollToBottom() {
     if (!scrollRef.current) return;
-    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+
+    // Scroll suave para o final da conversa
+    scrollRef.current.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }
 
   return (
@@ -231,14 +260,15 @@ export function WallEButton() {
                     type="text"
                     value={texto}
                     onChange={(e) => setTexto(e.target.value)}
-                    onKeyDown={async (e) => {
-                      if (e.key === "Enter") {
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !loading) {
                         e.preventDefault();
-                        await handleSend();
+                        handleSend();
                       }
                     }}
                     placeholder="Digite sua mensagem..."
-                    className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm chat-input"
+                    disabled={loading}
+                    className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-sm chat-input disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <Button
                     size="sm"
