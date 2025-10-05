@@ -264,7 +264,10 @@ function IconContainer({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className="cursor-pointer">
+      <button
+        onClick={onClick}
+        className={`cursor-pointer ${title === "Sair" ? "no-glow" : ""}`}
+      >
         {containerElement}
       </button>
     );
