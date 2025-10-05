@@ -17,6 +17,7 @@ import { MobileOptimizedDialog } from "@/components/Mobile/MobileOptimizedDialog
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useHealthProfile } from "@/hooks/useHealthProfile";
 import { HealthProfileRequest } from "@/types/healthProfile";
+import { useModal } from "@/contexts/ModalContext";
 
 // Mock user ID - em produção, viria do contexto de autenticação
 const MOCK_USER_ID = 1;
@@ -31,6 +32,7 @@ export function HealthProfile() {
     hasProfile,
   } = useHealthProfile({ userId: MOCK_USER_ID });
 
+  const { openModal, closeModal } = useModal();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     possui_asma: false,
@@ -54,8 +56,15 @@ export function HealthProfile() {
     }
   }, [profile]);
 
-  const handleOpenDialog = () => setIsDialogOpen(true);
-  const handleCloseDialog = () => setIsDialogOpen(false);
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+    openModal("health-profile");
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    closeModal("health-profile");
+  };
 
   const handleSave = async () => {
     setIsSubmitting(true);

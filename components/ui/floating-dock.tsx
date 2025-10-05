@@ -15,7 +15,7 @@ import { useRef, useState, useEffect } from "react";
 // Hook para detectar scroll e controlar visibilidade da dock
 const useScrollVisibility = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,20 +30,20 @@ const useScrollVisibility = () => {
         setIsVisible(false);
       }
       // Mostra quando scrollar para cima
-      else if (currentScrollY < lastScrollY) {
+      else if (currentScrollY < lastScrollYRef.current) {
         setIsVisible(true);
       }
       // Esconde quando scrollar para baixo (com threshold para evitar flickering)
-      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      else if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
         setIsVisible(false);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   return isVisible;
 };

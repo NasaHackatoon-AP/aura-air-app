@@ -7,13 +7,13 @@ import { MessageCircle, X, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import chatbotService from "@/services/chatbotService";
 import { motion, AnimatePresence } from "framer-motion";
+import { useModal } from "@/contexts/ModalContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function WallEButton() {
   const pathname = usePathname();
-
-  // Hide chatbot on login/signup pages
-  if (pathname === "/login" || pathname === "/signup") return null;
-
+  const { isAnyModalOpen, openModal, closeModal } = useModal();
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [texto, setTexto] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,6 +47,17 @@ export function WallEButton() {
       setTimeout(() => scrollToBottom(), 100);
     }
   }, [loading]);
+
+  // Hide chatbot on login/signup pages
+  if (pathname === "/login" || pathname === "/signup") return null;
+
+  // Hide chatbot on mobile when any modal is open
+  if (isMobile && isAnyModalOpen) return null;
+
+  const handleCloseChat = () => {
+    setIsOpen(false);
+    closeModal("chatbot");
+  };
 
   async function handleSend() {
     const text = texto.trim();
@@ -119,31 +130,39 @@ export function WallEButton() {
   return (
     <>
       {/* Floating Button */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0, rotate: -180 }}
-        animate={{ scale: 1, opacity: 1, rotate: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-[60]"
-      >
-        <Button
-          data-chatbot-button
-          onClick={() => setIsOpen(true)}
-          className={cn(
-            "h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl",
-            "bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
-            "text-white border-2 border-white/20 backdrop-blur-sm",
-            "transition-all duration-300 hover:scale-110",
-            "flex items-center justify-center",
-            "min-h-[56px] min-w-[56px] sm:min-h-[64px] sm:min-w-[64px]",
-            "pointer-events-auto floating-button"
-          )}
-          size="icon"
-        >
-          <Bot className="h-6 w-6 sm:h-7 sm:w-7" />
-        </Button>
-      </motion.div>
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0, rotate: -180 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0, opacity: 0, rotate: 180 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+            className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-[60]"
+          >
+            <Button
+              data-chatbot-button
+              onClick={() => {
+                setIsOpen(true);
+                openModal("chatbot");
+              }}
+              className={cn(
+                "h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl",
+                "bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
+                "text-white border-2 border-white/20 backdrop-blur-sm",
+                "transition-all duration-300 hover:scale-110",
+                "flex items-center justify-center",
+                "min-h-[56px] min-w-[56px] sm:min-h-[64px] sm:min-w-[64px]",
+                "pointer-events-auto floating-button"
+              )}
+              size="icon"
+            >
+              <Bot className="h-6 w-6 sm:h-7 sm:w-7" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Chat Modal */}
       <AnimatePresence>
@@ -157,7 +176,7 @@ export function WallEButton() {
           >
             <motion.div
               className="absolute inset-0 bg-black/50 chatbot-overlay"
-              onClick={() => setIsOpen(false)}
+              onClick={handleCloseChat}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -184,7 +203,7 @@ export function WallEButton() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleCloseChat}
                   className="h-8 w-8 text-white hover:bg-white/20 rounded-full"
                 >
                   <X className="h-4 w-4" />
@@ -200,7 +219,7 @@ export function WallEButton() {
                     key={idx}
                     className={`flex ${
                       m.from === "user" ? "justify-end" : "justify-start"
-                    } gap-3`}
+                    } gap-3 max-w-full overflow-hidden`}
                     initial={{ opacity: 0, y: 20, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.3, delay: idx * 0.1 }}
@@ -210,8 +229,12 @@ export function WallEButton() {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-md">
                           <Bot className="h-4 w-4 text-white" />
                         </div>
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl rounded-tl-md p-3 max-w-[75%] shadow-sm border border-slate-200 dark:border-slate-700 message-bubble message-enter">
-                          <p className="text-sm whitespace-pre-wrap text-slate-800 dark:text-slate-200 leading-relaxed">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl rounded-tl-md p-3 max-w-[75%] shadow-sm border border-slate-200 dark:border-slate-700 message-bubble message-enter overflow-hidden min-w-0">
+                          <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed break-words overflow-hidden" style={{
+                            wordWrap: 'break-word',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                          }}>
                             {m.text}
                           </p>
                         </div>
@@ -219,9 +242,13 @@ export function WallEButton() {
                     )}
 
                     {m.from === "user" && (
-                      <div className="flex items-end gap-3">
-                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-md p-3 max-w-[75%] shadow-md message-bubble message-enter">
-                          <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                      <div className="flex items-end gap-3 max-w-full overflow-hidden">
+                        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-md p-3 max-w-[75%] shadow-md message-bubble message-enter overflow-hidden min-w-0">
+                          <p className="text-sm leading-relaxed overflow-hidden" style={{
+                            wordWrap: 'break-word',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                          }}>
                             {m.text}
                           </p>
                         </div>

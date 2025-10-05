@@ -24,7 +24,9 @@ export function EmergencyNotificationManager() {
     };
 
     requestPermission();
+  }, []);
 
+  useEffect(() => {
     // Adiciona listener para novas notificações
     const removeListener = emergencyService.addListener((notification) => {
       setNotifications((prev) => [notification, ...prev]);
@@ -50,7 +52,8 @@ export function EmergencyNotificationManager() {
       removeListener();
       emergencyService.stopEmergencyMonitoring();
     };
-  }, [isPermissionGranted, showAlerts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPermissionGranted]);
 
   const handleDismissNotification = (notificationId: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== notificationId));

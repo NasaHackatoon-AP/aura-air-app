@@ -19,7 +19,7 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const mockHistoryData = [
   { time: "00:00", aqi: 42, pm25: 10 },
@@ -75,6 +75,34 @@ export function AirQualityHistory() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Memoize chart margins to prevent recreation on every render
+  const chartMargin = React.useMemo(() => ({
+    top: 5,
+    right: isMobile ? 5 : 20,
+    left: isMobile ? -20 : 0,
+    bottom: 5,
+  }), [isMobile]);
+
+  const xAxisTickStyle = React.useMemo(() => ({
+    fontSize: isMobile ? 10 : 12
+  }), [isMobile]);
+
+  const yAxisTickStyle = React.useMemo(() => ({
+    fontSize: isMobile ? 10 : 12
+  }), [isMobile]);
+
+  const legendStyle = React.useMemo(() => ({
+    fontSize: isMobile ? "11px" : "12px"
+  }), [isMobile]);
+
+  const dotConfig = React.useMemo(() => ({
+    r: isMobile ? 3 : 4
+  }), [isMobile]);
+
+  const activeDotConfig = React.useMemo(() => ({
+    r: isMobile ? 5 : 6
+  }), [isMobile]);
+
   return (
     <Card className="col-span-full">
       <CardHeader className="pb-3 sm:pb-6">
@@ -89,12 +117,7 @@ export function AirQualityHistory() {
         <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
           <AreaChart
             data={mockHistoryData}
-            margin={{
-              top: 5,
-              right: isMobile ? 5 : 20,
-              left: isMobile ? -20 : 0,
-              bottom: 5,
-            }}
+            margin={chartMargin}
           >
             <defs>
               <linearGradient id="colorAqi" x1="0" y1="0" x2="0" y2="1">
@@ -120,17 +143,17 @@ export function AirQualityHistory() {
             />
             <XAxis
               dataKey="time"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={xAxisTickStyle}
               stroke="hsl(var(--muted-foreground))"
             />
             <YAxis
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={yAxisTickStyle}
               stroke="hsl(var(--muted-foreground))"
               width={isMobile ? 30 : 40}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              wrapperStyle={{ fontSize: isMobile ? "11px" : "12px" }}
+              wrapperStyle={legendStyle}
               iconType="circle"
             />
             <Area
@@ -140,8 +163,9 @@ export function AirQualityHistory() {
               fill="url(#colorAqi)"
               strokeWidth={2.5}
               name="IQA"
-              dot={{ r: isMobile ? 3 : 4 }}
-              activeDot={{ r: isMobile ? 5 : 6 }}
+              dot={dotConfig}
+              activeDot={activeDotConfig}
+              isAnimationActive={false}
             />
             <Area
               type="monotone"
@@ -150,8 +174,9 @@ export function AirQualityHistory() {
               fill="url(#colorPm25)"
               strokeWidth={2.5}
               name="PM2.5 (μg/m³)"
-              dot={{ r: isMobile ? 3 : 4 }}
-              activeDot={{ r: isMobile ? 5 : 6 }}
+              dot={dotConfig}
+              activeDot={activeDotConfig}
+              isAnimationActive={false}
             />
           </AreaChart>
         </ResponsiveContainer>

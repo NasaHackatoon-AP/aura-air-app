@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import healthProfileService from "@/services/healthProfileService";
 import {
   HealthProfileRequest,
@@ -14,14 +14,7 @@ export function useHealthProfile({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-fetch profile when component mounts or userId changes
-  useEffect(() => {
-    if (autoFetch && userId) {
-      fetchProfile();
-    }
-  }, [userId, autoFetch]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     if (!userId) return;
 
     setIsLoading(true);
@@ -37,7 +30,14 @@ export function useHealthProfile({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
+
+  // Auto-fetch profile when component mounts or userId changes
+  useEffect(() => {
+    if (autoFetch && userId) {
+      fetchProfile();
+    }
+  }, [userId, autoFetch, fetchProfile]);
 
   const createProfile = async (profileData: HealthProfileRequest) => {
     setIsLoading(true);
