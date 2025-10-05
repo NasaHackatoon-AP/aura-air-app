@@ -74,6 +74,29 @@
   --sidebar-accent-foreground: oklch(0.95 0.01 240);
   --sidebar-border: oklch(0.25 0.01 240);
   --sidebar-ring: oklch(0.65 0.15 220);
+
+  /* Apenas no modo dark - dots e texto do gráfico em branco */
+  .recharts-text,
+  .recharts-text tspan,
+  .recharts-cartesian-axis-tick-value tspan,
+  .recharts-legend-item-text {
+    fill: white !important;
+    color: white !important;
+  }
+
+  /* Dots do gráfico em branco apenas no dark mode */
+  .recharts-dot,
+  .recharts-area-dot {
+    fill: white !important;
+    stroke: white !important;
+  }
+
+  /* Linha do IQA em branco apenas no dark mode - mantém PM2.5 laranja */
+  .recharts-area[data-key="aqi"],
+  .recharts-line[data-key="aqi"],
+  .recharts-curve[data-key="aqi"] {
+    stroke: white !important;
+  }
 }
 
 @theme inline {
@@ -240,20 +263,171 @@
       user-select: none;
     }
   }
+}
 
-  /* Otimizações para telas muito pequenas */
-  @media (max-width: 480px) {
-    /* Padding mínimo para evitar overflow */
-    .container,
-    .max-w-7xl {
-      padding-left: 0.75rem;
-      padding-right: 0.75rem;
-    }
+/* Estilos para seleção de satélites - mais harmônicos no modo dark */
+.satellite-selection-btn {
+  @apply transition-all duration-300 ease-in-out;
+  @apply border border-border/50;
+  @apply hover:border-primary/60;
+  @apply hover:bg-primary/5;
+}
 
-    /* Texto mínimo legível */
-    .text-xs {
-      font-size: 0.75rem;
-      line-height: 1rem;
-    }
+.satellite-selection-btn.selected {
+  @apply bg-primary/10;
+  @apply border-primary/80;
+  @apply text-primary;
+  @apply shadow-sm;
+}
+
+/* Modo dark - destaque mais harmônico */
+.dark .satellite-selection-btn {
+  @apply border-blue-400/30;
+  @apply text-white;
+  @apply hover:border-blue-300/50;
+  @apply hover:bg-blue-500/10;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+.dark .satellite-selection-btn.selected {
+  @apply bg-blue-500/15;
+  @apply border-blue-400/60;
+  @apply text-white;
+  @apply shadow-blue-500/20;
+  @apply shadow-sm;
+}
+
+/* Estilo global para todos os botões no modo dark */
+.dark button {
+  @apply text-white;
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.dark button:hover {
+  @apply text-white;
+  @apply shadow-lg;
+  @apply shadow-blue-400/30;
+}
+
+/* Botões outline específicos no modo dark */
+.dark button[data-variant="outline"],
+.dark .btn-outline {
+  @apply border-blue-400/30;
+  @apply text-white;
+  @apply hover:border-blue-300/50;
+  @apply hover:bg-blue-500/10;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Botões secundários no modo dark */
+.dark button[data-variant="secondary"],
+.dark .btn-secondary {
+  @apply bg-blue-500/10;
+  @apply border-blue-400/40;
+  @apply text-white;
+  @apply hover:bg-blue-500/20;
+  @apply hover:border-blue-300/60;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Botões ghost no modo dark */
+.dark button[data-variant="ghost"],
+.dark .btn-ghost {
+  @apply text-white;
+  @apply hover:bg-blue-500/10;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Estilos específicos para componentes UI no modo dark */
+.dark .variant-outline {
+  @apply border-blue-400/30;
+  @apply text-white;
+  @apply hover:border-blue-300/50;
+  @apply hover:bg-blue-500/10;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+.dark .variant-secondary {
+  @apply bg-blue-500/10;
+  @apply border-blue-400/40;
+  @apply text-white;
+  @apply hover:bg-blue-500/20;
+  @apply hover:border-blue-300/60;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+.dark .variant-ghost {
+  @apply text-white;
+  @apply hover:bg-blue-500/10;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Botões de ícone no modo dark */
+.dark button[data-size="icon"] {
+  @apply text-white;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Botões com background transparente no modo dark */
+.dark .bg-transparent {
+  @apply text-white;
+  @apply hover:text-white;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-blue-400/30;
+}
+
+/* Exceção para botão do chatbot - não aplicar estilos globais */
+.dark button[data-chatbot-button] {
+  @apply text-primary-foreground;
+  @apply hover:text-primary-foreground;
+  @apply hover:scale-110;
+  @apply hover:shadow-lg;
+  @apply hover:shadow-primary/30;
+}
+
+/* Melhorias para transição de desfoque do chatbot */
+.chatbot-overlay {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: backdrop-filter 0.4s ease-in-out,
+    -webkit-backdrop-filter 0.4s ease-in-out;
+}
+
+/* Suporte para navegadores que não suportam backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .chatbot-overlay {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Otimizações para telas muito pequenas */
+@media (max-width: 480px) {
+  /* Padding mínimo para evitar overflow */
+  .container,
+  .max-w-7xl {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Texto mínimo legível */
+  .text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
 }

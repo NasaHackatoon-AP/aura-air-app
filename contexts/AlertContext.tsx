@@ -60,10 +60,10 @@ export function AlertProvider({ children }: AlertProviderProps) {
 
       // Mostra os alertas automaticamente se houver algum
       if (disasterAlerts.length > 0 || healthAlerts.length > 0) {
-        // Pequeno delay para dar tempo do login completar
+        // Delay de 2 segundos para dar tempo do login completar
         setTimeout(() => {
           setIsModalOpen(true);
-        }, 1000);
+        }, 3000);
       }
     } catch (error) {
       console.error("Erro ao carregar alertas:", error);
