@@ -7,9 +7,7 @@ import { WeatherAlerts } from "@/components/Weather/WeatherAlerts/WeatherAlerts"
 import { AirQualityIndex } from "@/components/AirQuality/AirQualityIndex/AirQualityIndex";
 import { Pollutants } from "@/components/AirQuality/Pollutants/Pollutants";
 import { AirQualityHistory } from "@/components/AirQuality/AirQualityHistory/AirQualityHistory";
-import { HealthAlerts } from "@/components/Health/HealthAlerts/HealthAlerts";
-import { HealthProfile } from "@/components/Health/HealthProfile/HealthProfile";
-import { HealthRecommendations } from "@/components/Health/HealthRecommendations/HealthRecommendations";
+import { PersonalizedHealthCard } from "@/components/Health/PersonalizedHealthCard/PersonalizedHealthCard";
 // import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
@@ -77,13 +75,6 @@ export default function DashboardPage() {
       href: "/dashboard#alerts",
     },
     {
-      title: "Configurações",
-      icon: (
-        <Settings className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "/settings",
-    },
-    {
       title: "Sair",
       icon: (
         <LogOut className="h-full w-full text-neutral-500 dark:text-neutral-300" />
@@ -97,27 +88,11 @@ export default function DashboardPage() {
       <header className="border-b bg-card relative overflow-visible">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <Image src={logo} alt="Air Aura Logo" className="h-15 w-15" />
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                {profile.location}
-              </p>
-            </div>
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative z-50">
               {/* Theme Toggle */}
               <ThemeToggle size="icon" className="h-7 w-7 sm:h-10 sm:w-10" />
 
-              {/* User Avatar */}
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-900 flex items-center justify-center shadow-lg ring-2 ring-white/20 dark:ring-black/20">
-                  <User className="h-3 w-3 sm:h-4 sm:w-4 text-white font-semibold" />
-                </div>
-                <span className="hidden sm:inline text-sm font-medium truncate max-w-20">
-                  {profile.name}
-                </span>
-              </div>
+            
             </div>
           </div>
         </div>
@@ -135,11 +110,8 @@ export default function DashboardPage() {
           <HourlyForecast />
         </MobileOptimizedGrid>
 
-        {/* 3) Alertas de Saúde Personalizados */}
-        <HealthAlerts />
-
-        {/* 4) Perfil de Saúde */}
-        <HealthProfile />
+        {/* 3) Card Unificado de Saúde */}
+        <PersonalizedHealthCard userId={1} />
 
         {/* 5) Previsão para 7 Dias */}
         <WeatherForecast />
@@ -155,11 +127,6 @@ export default function DashboardPage() {
 
         {/* 9) Histórico de Qualidade do Ar */}
         <AirQualityHistory />
-
-        {/* 10) Recomendações de Atividades */}
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
-          <HealthRecommendations />
-        </MobileOptimizedGrid>
       </main>
 
       {/* Floating Dock Navigation */}
