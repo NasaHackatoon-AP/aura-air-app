@@ -401,6 +401,13 @@
   @apply hover:shadow-primary/30;
 }
 
+/* Exceção para botão Sair - remover glow */
+.dark button.no-glow,
+.dark .no-glow {
+  @apply hover:shadow-none;
+  @apply hover:shadow-transparent;
+}
+
 /* Melhorias para transição de desfoque do chatbot */
 .chatbot-overlay {
   backdrop-filter: blur(8px);
