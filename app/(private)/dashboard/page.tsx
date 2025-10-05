@@ -54,25 +54,11 @@ export default function DashboardPage() {
       href: "/dashboard",
     },
     {
-      title: "Qualidade do Ar",
-      icon: (
-        <Wind className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "/dashboard#air-quality",
-    },
-    {
       title: "Satélite",
       icon: (
         <Satellite className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
       href: "/satellite",
-    },
-    {
-      title: "Alertas",
-      icon: (
-        <Bell className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "/dashboard#alerts",
     },
     {
       title: "Sair",
@@ -111,7 +97,7 @@ export default function DashboardPage() {
         </MobileOptimizedGrid>
 
         {/* 3) Card Unificado de Saúde */}
-        <PersonalizedHealthCard userId={1} />
+        
 
         {/* 5) Previsão para 7 Dias */}
         <WeatherForecast />
