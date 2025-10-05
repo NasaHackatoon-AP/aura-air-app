@@ -47,7 +47,6 @@ export function WallEButton() {
       await new Promise((resolve) =>
         setTimeout(resolve, baseDelay + textDelay + randomDelay)
       );
-
       if (res && Array.isArray(res.historico) && res.historico.length > 0) {
         const histMsgs: Array<{ from: "user" | "bot"; text: string }> = [];
         res.historico.forEach((h: any) => {
@@ -55,11 +54,14 @@ export function WallEButton() {
           if (h.bot) histMsgs.push({ from: "bot", text: h.bot });
         });
         setMessages((prev) => [...prev, ...histMsgs]);
-      }
-
-      if (res && (res.resposta || typeof res === "string")) {
+      } else if (res && (res.resposta || typeof res === "string")) {
         const botText = typeof res === "string" ? res : res.resposta;
-        setMessages((prev) => [...prev, { from: "bot", text: botText }]);
+        // avoid appending duplicate bot message if it's already the last one
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last && last.from === "bot" && last.text === botText) return prev;
+          return [...prev, { from: "bot", text: botText }];
+        });
       }
     } catch (err) {
       console.error("chatbot error", err);
