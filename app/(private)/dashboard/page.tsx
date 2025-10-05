@@ -10,7 +10,7 @@ import { AirQualityHistory } from "@/components/AirQuality/AirQualityHistory/Air
 import { HealthAlerts } from "@/components/Health/HealthAlerts/HealthAlerts";
 import { HealthProfile } from "@/components/Health/HealthProfile/HealthProfile";
 import { HealthRecommendations } from "@/components/Health/HealthRecommendations/HealthRecommendations";
-import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
+// import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
 import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
@@ -165,24 +165,39 @@ export default function DashboardPage() {
         <EmergencyNotificationBar radius={100} />
         <AlertNotification />
 
-        <EmergencyTestPanel />
+        {/* <EmergencyTestPanel /> */}
 
-        <HealthAlerts />
-        <WeatherAlerts />
+        {/* 1) Condições atuais + 2) Previsão horária */}
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
           <WeatherOverview />
           <HourlyForecast />
         </MobileOptimizedGrid>
+
+        {/* 3) Alertas de Saúde Personalizados */}
+        <HealthAlerts />
+
+        {/* 4) Perfil de Saúde */}
+        <HealthProfile />
+
+        {/* 5) Previsão para 7 Dias */}
         <WeatherForecast />
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
-          <AirQualityIndex />
-          <HealthProfile />
-        </MobileOptimizedGrid>
+
+        {/* 6) Alertas Meteorológicos */}
+        <WeatherAlerts />
+
+        {/* 7) Índice de Qualidade do Ar */}
+        <AirQualityIndex />
+
+        {/* 8) Poluentes Atmosféricos */}
         <Pollutants />
+
+        {/* 9) Histórico de Qualidade do Ar */}
+        <AirQualityHistory />
+
+        {/* 10) Recomendações de Atividades */}
         <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
           <HealthRecommendations />
         </MobileOptimizedGrid>
-        <AirQualityHistory />
       </main>
 
       {/* Floating Dock Navigation */}
