@@ -193,9 +193,6 @@ export default function SettingsPage() {
                 <p className="font-medium text-sm sm:text-base">Email</p>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">{profile.email}</p>
               </div>
-              <Button variant="outline" size="sm" className="flex-shrink-0 h-8 text-xs sm:text-sm">
-                Editar
-              </Button>
             </div>
             <Separator />
             <div className="flex items-center justify-between gap-3">
