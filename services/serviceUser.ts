@@ -9,21 +9,19 @@ interface createUser {
     estado: string;
 }
 
+
+
+export const createUser = async (user: createUser) => {
+    const response = await api.post('/airquality/usuario', user);
+    return response; // return full response so caller can check status
+}
+
 interface loginUser {
     email: string;
     senha: string;
 }
 
-interface userLoginResponse {
-
-}
-
-export const loginUser = async (user: loginUser) => {
-    const response = await api.post('/airquality/login', user);
-    return response.data;
-}
-
-export const createUser = async (user: createUser) => {
-    const response = await api.post('/airquality/usuario', user);
-    return response; // return full response so caller can check status
+export const loginUser = async (credentials: loginUser) => {
+    const response = await api.post('/airquality/login', credentials);
+    return response; // caller can read response.data.access_token and response.data.usuario
 }
