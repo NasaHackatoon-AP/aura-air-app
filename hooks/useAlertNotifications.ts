@@ -22,7 +22,8 @@ export function useAlertNotifications() {
 
       return () => clearTimeout(timer);
     }
-  }, [alerts, isModalOpen, showAlerts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alerts, isModalOpen]);
 
   return {
     hasCriticalAlerts: alerts.some((alert) =>
