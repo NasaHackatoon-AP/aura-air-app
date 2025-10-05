@@ -5,12 +5,23 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import chatbotService from "@/services/chatbotService";
 import { motion, AnimatePresence } from "framer-motion";
+
 
 export function WallEButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const [texto, setTexto] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Array<{ from: 'user' | 'bot'; text: string }>>([
+    {
+      from: 'bot',
+      text: 'Olá! Sou o Wall-E, seu assistente de IA para monitoramento de qualidade do ar. Como posso ajudá-lo hoje?'
+    }
+  ]);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-
   // Não mostrar o chatbot na página de login
   if (pathname === "/login" || pathname === "/signup") {
     return null;
@@ -117,33 +128,51 @@ export function WallEButton() {
                 </Button>
               </div>
 
-              {/* Chat Messages */}
-              <div className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 sm:space-y-4">
-                <div className="flex items-start gap-2">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <Bot className="h-3 w-3 text-primary-foreground" />
-                  </div>
-                  <div className="bg-muted rounded-lg p-2 sm:p-3 max-w-[85%] sm:max-w-[80%]">
-                    <p className="text-xs sm:text-sm">
-                      Olá! Sou o Wall-E, seu assistente de IA para monitoramento
-                      de qualidade do ar. Como posso ajudá-lo hoje?
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div ref={scrollRef} className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3 sm:space-y-4">
+              {messages.map((m, idx) => (
+                <div key={idx} className={`flex ${m.from === 'user' ? 'justify-end' : 'items-start'} gap-2`}>
+                  {m.from === 'bot' && (
+                    <>
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <Bot className="h-3 w-3 text-primary-foreground" />
+                      </div>
+                      <div className="bg-muted rounded-lg p-2 sm:p-3 max-w-[85%] sm:max-w-[80%]">
+                        <p className="text-xs sm:text-sm whitespace-pre-wrap">{m.text}</p>
+                      </div>
+                    </>
+                  )}
 
-              {/* Input Area */}
-              <div className="p-3 sm:p-4 border-t">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Digite sua mensagem..."
-                    className="flex-1 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <Button size="sm" className="px-2 sm:px-3 h-8 sm:h-9">
-                    <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
+                  {m.from === 'user' && (
+                    <div className="flex items-end gap-2">
+                      <div className="bg-primary text-primary-foreground rounded-lg p-2 sm:p-3 max-w-[85%] sm:max-w-[80%]">
+                        <p className="text-xs sm:text-sm whitespace-pre-wrap">{m.text}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              ))}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 sm:p-4 border-t">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={texto}
+                  onChange={(e) => setTexto(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      await handleSend();
+                    }
+                  }}
+                  placeholder="Digite sua mensagem..."
+                  className="flex-1 px-2 sm:px-3 py-2 border rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <Button size="sm" className="px-2 sm:px-3 h-8 sm:h-9" onClick={handleSend} disabled={loading}>
+                  <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+
               </div>
             </motion.div>
           </motion.div>
@@ -151,4 +180,46 @@ export function WallEButton() {
       </AnimatePresence>
     </>
   );
+
+  async function handleSend() {
+    const text = texto.trim();
+    if (!text) return;
+
+    // add user message
+    setMessages((prev) => [...prev, { from: 'user', text }]);
+    setTexto("");
+    setLoading(true);
+
+    try {
+      const res = await chatbotService.sendMessage({ texto: text });
+
+      // If the API returns a `historico` array, map it first (optional)
+      if (res && Array.isArray(res.historico) && res.historico.length > 0) {
+        const histMsgs: Array<{ from: 'user' | 'bot'; text: string }> = [];
+        res.historico.forEach((h: any) => {
+          if (h.usuario) histMsgs.push({ from: 'user', text: h.usuario });
+          if (h.bot) histMsgs.push({ from: 'bot', text: h.bot });
+        });
+        setMessages((prev) => [...prev, ...histMsgs]);
+      }
+
+      // prefer `res.resposta` as bot reply
+      if (res && (res.resposta || typeof res === 'string')) {
+        const botText = typeof res === 'string' ? res : res.resposta;
+        setMessages((prev) => [...prev, { from: 'bot', text: botText }]);
+      }
+    } catch (err) {
+      console.error('chatbot error', err);
+      setMessages((prev) => [...prev, { from: 'bot', text: 'Desculpe, houve um erro ao enviar sua mensagem.' }]);
+    } finally {
+      setLoading(false);
+      // small timeout to allow DOM update then scroll
+      setTimeout(() => scrollToBottom(), 50);
+    }
+  }
+
+  function scrollToBottom() {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }
 }
