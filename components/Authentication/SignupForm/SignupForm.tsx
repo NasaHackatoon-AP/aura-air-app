@@ -8,6 +8,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog"
 import { AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -28,6 +38,7 @@ export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,10 +75,14 @@ export function SignupForm() {
         console.debug("createUser payload:", payload)
       } catch (e) {}
 
-      await createUser(payload)
-  // Only create the user — do not redirect or persist
-  setSuccess("Usuário criado com sucesso")
-  setIsLoading(false)
+      const res = await createUser(payload)
+      // Only create the user — show modal on success (2xx)
+      if (res?.status >= 200 && res.status < 300) {
+        setIsDialogOpen(true)
+      } else {
+        setSuccess("Usuário criado com sucesso")
+      }
+      setIsLoading(false)
     } catch (err: any) {
       // Try to show server-provided message or a generic one
       const status = err?.response?.status
@@ -87,10 +102,24 @@ export function SignupForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
-          {success && (
-            <Alert>
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
+          {isDialogOpen && (
+            <AlertDialog open={isDialogOpen} onOpenChange={(open) => {
+              setIsDialogOpen(open)
+              if (!open) router.push('/login')
+            }}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Usuário criado</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Usuário criado com sucesso. Você será redirecionado para a tela de login ao fechar.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Fechar</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => router.push('/login')}>Ir para Login</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
           {error && (
             <Alert variant="destructive">
