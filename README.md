@@ -2,7 +2,8 @@
 
 <div align="center">
 
-![Air Aura Logo](https://i.ibb.co/xSgrzNVt/logo-aura.png)
+<img src="https://i.ibb.co/xSgrzNVt/logo-aura.png" alt="Air Aura Logo" width="150"/>
+
 
 **Uma plataforma inteligente para monitoramento e previsão da qualidade do ar usando dados da NASA e Machine Learning**
 
