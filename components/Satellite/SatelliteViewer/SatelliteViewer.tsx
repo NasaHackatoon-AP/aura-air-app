@@ -60,10 +60,12 @@ export function SatelliteViewer() {
           {mockSatellites.map((sat, index) => (
             <Button
               key={sat.name}
-              variant={selectedSatellite === index ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={() => setSelectedSatellite(index)}
-              className="bg-transparent"
+              className={`satellite-selection-btn ${
+                selectedSatellite === index ? "selected" : ""
+              }`}
             >
               {sat.name}
             </Button>

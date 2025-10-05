@@ -140,7 +140,7 @@ export function AirQualityHistory() {
               fill="url(#colorAqi)"
               strokeWidth={2.5}
               name="IQA"
-              dot={{ r: isMobile ? 3 : 4, fill: "hsl(var(--primary))" }}
+              dot={{ r: isMobile ? 3 : 4 }}
               activeDot={{ r: isMobile ? 5 : 6 }}
             />
             <Area
@@ -150,7 +150,7 @@ export function AirQualityHistory() {
               fill="url(#colorPm25)"
               strokeWidth={2.5}
               name="PM2.5 (μg/m³)"
-              dot={{ r: isMobile ? 3 : 4, fill: "#f97316" }}
+              dot={{ r: isMobile ? 3 : 4 }}
               activeDot={{ r: isMobile ? 5 : 6 }}
             />
           </AreaChart>
