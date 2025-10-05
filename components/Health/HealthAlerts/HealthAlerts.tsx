@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Heart, AlertTriangle, Info, CheckCircle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Heart, AlertTriangle, Info, CheckCircle } from "lucide-react";
 
 interface HealthAlert {
-  id: string
-  severity: "critical" | "warning" | "info" | "safe"
-  condition: string
-  title: string
-  description: string
-  recommendations: string[]
+  id: string;
+  severity: "critical" | "warning" | "info" | "safe";
+  condition: string;
+  title: string;
+  description: string;
+  recommendations: string[];
 }
 
 const mockHealthAlerts: HealthAlert[] = [
@@ -19,7 +19,8 @@ const mockHealthAlerts: HealthAlert[] = [
     severity: "warning",
     condition: "Asma",
     title: "Qualidade do Ar Moderada",
-    description: "Os níveis de PM2.5 estão moderados. Pessoas com asma podem sentir desconforto respiratório leve.",
+    description:
+      "Os níveis de PM2.5 estão moderados. Pessoas com asma podem sentir desconforto respiratório leve.",
     recommendations: [
       "Evite exercícios intensos ao ar livre",
       "Mantenha medicação de resgate por perto",
@@ -32,9 +33,13 @@ const mockHealthAlerts: HealthAlert[] = [
     condition: "Geral",
     title: "Índice UV Alto",
     description: "O índice UV está alto hoje. Proteção solar é recomendada.",
-    recommendations: ["Use protetor solar FPS 30+", "Evite exposição entre 10h-16h", "Use óculos de sol e chapéu"],
+    recommendations: [
+      "Use protetor solar FPS 30+",
+      "Evite exposição entre 10h-16h",
+      "Use óculos de sol e chapéu",
+    ],
   },
-]
+];
 
 const severityConfig = {
   critical: {
@@ -61,7 +66,7 @@ const severityConfig = {
     bgColor: "bg-chart-5/10",
     borderColor: "border-chart-5",
   },
-}
+};
 
 export function HealthAlerts() {
   return (
@@ -77,14 +82,19 @@ export function HealthAlerts() {
           <div className="text-center py-8 text-muted-foreground">
             <CheckCircle className="h-12 w-12 mx-auto mb-3 text-chart-5" />
             <p>Nenhum alerta de saúde no momento</p>
-            <p className="text-sm mt-1">As condições estão favoráveis para sua saúde</p>
+            <p className="text-sm mt-1">
+              As condições estão favoráveis para sua saúde
+            </p>
           </div>
         ) : (
           mockHealthAlerts.map((alert) => {
-            const config = severityConfig[alert.severity]
-            const Icon = config.icon
+            const config = severityConfig[alert.severity];
+            const Icon = config.icon;
             return (
-              <div key={alert.id} className={`p-4 rounded-lg border-2 ${config.bgColor} ${config.borderColor}`}>
+              <div
+                key={alert.id}
+                className={`p-4 rounded-lg border-2 ${config.bgColor} ${config.borderColor}`}
+              >
                 <div className="flex items-start gap-3">
                   <Icon className={`h-5 w-5 mt-0.5 ${config.color}`} />
                   <div className="flex-1 space-y-3">
@@ -95,13 +105,18 @@ export function HealthAlerts() {
                           {alert.condition}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{alert.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {alert.description}
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Recomendações:</p>
                       <ul className="space-y-1">
                         {alert.recommendations.map((rec, index) => (
-                          <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <li
+                            key={index}
+                            className="text-sm text-muted-foreground flex items-start gap-2"
+                          >
                             <span className="text-primary mt-1">•</span>
                             <span>{rec}</span>
                           </li>
@@ -111,10 +126,10 @@ export function HealthAlerts() {
                   </div>
                 </div>
               </div>
-            )
+            );
           })
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
