@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const EXTERNAL_API_BASE_URL =
-  "https://gustavo-production-08e9.up.railway.app/airquality/aqi";
+  "https://gustavo-production-08e9.up.railway.app/airmonitor/monitor/aqi";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -15,12 +15,15 @@ export async function GET(req: NextRequest) {
     console.log(
       `🔍 Buscando dados reais da API externa para userId: ${userId}`
     );
-    const res = await fetch(`${EXTERNAL_API_BASE_URL}/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `${EXTERNAL_API_BASE_URL}?lat=-23.5505&lon=-46.6333&usuario_id=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     console.log(`📊 Status da API externa: ${res.status}`);
     console.log(`📋 Content-Type: ${res.headers.get("content-type")}`);

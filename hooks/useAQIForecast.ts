@@ -41,9 +41,11 @@ export function useAQIForecast({
       setForecast(forecastData);
     } catch (err) {
       console.error("❌ useAQIForecast: Erro ao buscar previsão:", err);
+
       setError(
         err instanceof Error ? err.message : "Erro ao carregar previsão de AQI"
       );
+      setForecast(null);
     } finally {
       setIsLoading(false);
     }
