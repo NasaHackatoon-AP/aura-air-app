@@ -7,9 +7,7 @@ import { WeatherAlerts } from "@/components/Weather/WeatherAlerts/WeatherAlerts"
 import { AirQualityIndex } from "@/components/AirQuality/AirQualityIndex/AirQualityIndex";
 import { Pollutants } from "@/components/AirQuality/Pollutants/Pollutants";
 import { AirQualityHistory } from "@/components/AirQuality/AirQualityHistory/AirQualityHistory";
-import { HealthAlerts } from "@/components/Health/HealthAlerts/HealthAlerts";
-import { HealthProfile } from "@/components/Health/HealthProfile/HealthProfile";
-import { HealthRecommendations } from "@/components/Health/HealthRecommendations/HealthRecommendations";
+import { PersonalizedHealthCard } from "@/components/Health/PersonalizedHealthCard/PersonalizedHealthCard";
 // import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
 import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
@@ -112,11 +110,8 @@ export default function DashboardPage() {
           <HourlyForecast />
         </MobileOptimizedGrid>
 
-        {/* 3) Alertas de Saúde Personalizados */}
-        <HealthAlerts />
-
-        {/* 4) Perfil de Saúde */}
-        <HealthProfile />
+        {/* 3) Card Unificado de Saúde */}
+        <PersonalizedHealthCard userId={1} />
 
         {/* 5) Previsão para 7 Dias */}
         <WeatherForecast />
@@ -132,11 +127,6 @@ export default function DashboardPage() {
 
         {/* 9) Histórico de Qualidade do Ar */}
         <AirQualityHistory />
-
-        {/* 10) Recomendações de Atividades */}
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
-          <HealthRecommendations />
-        </MobileOptimizedGrid>
       </main>
 
       {/* Floating Dock Navigation */}

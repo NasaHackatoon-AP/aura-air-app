@@ -7,6 +7,9 @@ import { AirQualityHistoryTest } from "@/components/AirQuality/AirQualityHistory
 import { CurrentConditions } from "@/components/Weather/CurrentConditions/CurrentConditions";
 import { HourlyForecast } from "@/components/Weather/HourlyForecast/HourlyForecast";
 import { WeatherDashboard } from "@/components/Weather/WeatherDashboard/WeatherDashboard";
+import { WeatherAlerts } from "@/components/Weather/WeatherAlerts/WeatherAlerts";
+import { WeatherAlertsTest } from "@/components/Weather/WeatherAlertsTest/WeatherAlertsTest";
+import { PersonalizedHealthCard } from "@/components/Health/PersonalizedHealthCard/PersonalizedHealthCard";
 
 export default function TestAirQualityPage() {
   return (
@@ -69,6 +72,23 @@ export default function TestAirQualityPage() {
           Dashboard Climático Completo
         </h2>
         <WeatherDashboard />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Alertas Meteorológicos</h2>
+        <WeatherAlerts />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">
+          Teste de Emergência - Alertas
+        </h2>
+        <WeatherAlertsTest />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Card Unificado de Saúde</h2>
+        <PersonalizedHealthCard userId={1} />
       </div>
     </div>
   );
