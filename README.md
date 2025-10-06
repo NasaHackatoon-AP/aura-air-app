@@ -25,7 +25,6 @@
 * [📦 Installation](#-installation)
 * [🐳 Docker](#-docker)
 * [🌐 Deployment](#-deployment)
-* [📱 Screenshots](#-screenshots)
 * [👥 Contributors](#-contributors)
 * [📄 License](#-license)
 
@@ -282,24 +281,6 @@ EMAIL_PASS=your_app_password
 NEXT_PUBLIC_API_URL=https://your-backend.railway.app
 NEXT_PUBLIC_APP_NAME=Aura Air App
 ```
-
-## 📱 Screenshots
-
-### Main Dashboard
-
-![Dashboard](https://via.placeholder.com/800x400/1e40af/ffffff?text=Aura+Air+Dashboard)
-
-### AQI Monitoring
-
-![AQI Monitor](https://via.placeholder.com/800x400/16a34a/ffffff?text=AQI+Monitoring)
-
-### Smart Chatbot
-
-![Chatbot](https://via.placeholder.com/800x400/9333ea/ffffff?text=Smart+Chatbot)
-
-### ML Predictions
-
-![ML Predictions](https://via.placeholder.com/800x400/dc2626/ffffff?text=Machine+Learning+Predictions)
 
 ## 👥 Contributors
 
