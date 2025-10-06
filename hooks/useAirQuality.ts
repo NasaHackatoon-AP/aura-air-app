@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface AirQualityData {
   latitude: number;
@@ -27,19 +28,22 @@ export function useAirQuality({
   autoFetch = true,
   refreshInterval = 5 * 60 * 1000, // 5 minutos
 }: UseAirQualityOptions = {}) {
+  const { location } = useLocation();
   const [data, setData] = useState<AirQualityData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchAirQuality = async () => {
-    console.log(`🔍 useAirQuality: Buscando dados para userId: ${userId}`);
+  const fetchAirQuality = useCallback(async () => {
+    console.log(
+      `🔍 useAirQuality: Buscando dados para userId: ${userId} em ${location.city}, ${location.country} (${location.latitude}, ${location.longitude})`
+    );
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `/api/air-quality?userId=${userId}&lat=-23.5505&lon=-46.6333`,
+        `/api/air-quality?userId=${userId}&lat=${location.latitude}&lon=${location.longitude}`,
         {
           method: "GET",
           headers: {
@@ -73,14 +77,26 @@ export function useAirQuality({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [
+    userId,
+    location.latitude,
+    location.longitude,
+    location.city,
+    location.country,
+  ]);
 
-  // Auto-fetch quando o componente monta ou userId muda
+  // Auto-fetch quando o componente monta, userId muda ou localização muda
   useEffect(() => {
     if (autoFetch && userId) {
       fetchAirQuality();
     }
-  }, [userId, autoFetch]);
+  }, [
+    userId,
+    autoFetch,
+    location.latitude,
+    location.longitude,
+    fetchAirQuality,
+  ]);
 
   // Auto-refresh em intervalos regulares
   useEffect(() => {

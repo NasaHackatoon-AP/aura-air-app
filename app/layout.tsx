@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
-import { AlertProvider } from "@/contexts/AlertContext";
 import { ModalProvider } from "@/contexts/ModalContext";
-import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import { MobileOptimizedLayout } from "@/components/Mobile/MobileOptimizedLayout/MobileOptimizedLayout";
 import { WallEButton } from "@/components/Chatbot/WallEButton/WallEButton";
@@ -31,14 +30,13 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <MobileOptimizedLayout>
-          <ModalProvider>
-            <AlertProvider>
+          <LocationProvider>
+            <ModalProvider>
               {children}
-              <AlertWrapper />
               <EmergencyNotificationManager />
               <WallEButton />
-            </AlertProvider>
-          </ModalProvider>
+            </ModalProvider>
+          </LocationProvider>
         </MobileOptimizedLayout>
         <Toaster position="top-right" richColors />
         <Analytics />

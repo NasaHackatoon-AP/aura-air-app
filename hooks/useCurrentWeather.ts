@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface CurrentWeatherData {
   temperature: number;
@@ -12,6 +13,9 @@ interface CurrentWeatherData {
   pressure: number;
   uvIndex: number;
   city: string;
+  state: string;
+  country: string;
+  countryCode: string;
   lastUpdated: string;
 }
 
@@ -19,26 +23,37 @@ interface UseCurrentWeatherOptions {
   userId?: number;
   autoFetch?: boolean;
   refreshInterval?: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 export function useCurrentWeather({
   userId = 1,
   autoFetch = true,
   refreshInterval = 5 * 60 * 1000, // 5 minutos
+  latitude,
+  longitude,
 }: UseCurrentWeatherOptions = {}) {
+  const { location } = useLocation();
   const [data, setData] = useState<CurrentWeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  // Usar coordenadas do contexto se não fornecidas
+  const currentLat = latitude ?? location.latitude;
+  const currentLon = longitude ?? location.longitude;
+
   const fetchCurrentWeather = useCallback(async () => {
-    console.log(`🌤️ useCurrentWeather: Buscando dados para userId: ${userId}`);
+    console.log(
+      `🌤️ useCurrentWeather: Buscando dados para userId: ${userId} em ${location.city}, ${location.country} (${currentLat}, ${currentLon})`
+    );
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `/api/current-weather?userId=${userId}&lat=-23.5505&lon=-46.6333`,
+        `/api/current-weather?userId=${userId}&lat=${currentLat}&lon=${currentLon}`,
         {
           method: "GET",
           headers: {
@@ -75,10 +90,10 @@ export function useCurrentWeather({
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, [userId, currentLat, currentLon, location.city, location.country]);
 
   const processWeatherData = (apiData: any): CurrentWeatherData => {
-    const { clima } = apiData;
+    const { clima, latitude, longitude } = apiData;
 
     // Calcular sensação térmica
     const feelsLike = calculateFeelsLike(
@@ -99,6 +114,8 @@ export function useCurrentWeather({
     // Calcular índice UV
     const uvIndex = calculateUVIndex(clima.descricao);
 
+    // Determinar estado e país baseado nas coordenadas
+    // Usar estado do contexto de localização em vez de calcular pelas coordenadas
     return {
       temperature: Math.round(clima.temperatura),
       feelsLike: Math.round(feelsLike),
@@ -109,6 +126,9 @@ export function useCurrentWeather({
       pressure: Math.round(pressure),
       uvIndex: Math.round(uvIndex),
       city: clima.cidade,
+      state: location.state, // Usar estado do contexto
+      country: location.country, // Usar país do contexto
+      countryCode: location.countryCode, // Usar código do país do contexto
       lastUpdated: new Date().toLocaleString("pt-BR"),
     };
   };
@@ -205,7 +225,24 @@ export function useCurrentWeather({
 
       return () => clearInterval(interval);
     }
-  }, [autoFetch, fetchCurrentWeather, refreshInterval]);
+  }, [
+    autoFetch,
+    fetchCurrentWeather,
+    refreshInterval,
+    location.latitude,
+    location.longitude,
+  ]);
+
+  const updateLocation = useCallback(
+    (newLat: number, newLon: number) => {
+      console.log(
+        `🌍 useCurrentWeather: Atualizando localização para ${newLat}, ${newLon}`
+      );
+      // Atualizar as coordenadas e buscar novos dados
+      fetchCurrentWeather();
+    },
+    [fetchCurrentWeather]
+  );
 
   const getTimeSinceUpdate = () => {
     if (!lastUpdated) return "Nunca";
@@ -229,6 +266,7 @@ export function useCurrentWeather({
     isLoading,
     error,
     fetchCurrentWeather,
+    updateLocation,
     hasData: !!data,
     getTimeSinceUpdate,
   };
