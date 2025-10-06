@@ -143,7 +143,7 @@ cd aura-air-app
 ### 2. Backend Setup
 
 ```bash
-cd backend
+cd gustavo
 python -m venv venv
 venv\Scripts\activate  # Windows
 # or
@@ -163,7 +163,7 @@ OPENWEATHER_API_KEY=your_openweather_api_key
 ### 3. Frontend Setup
 
 ```bash
-cd frontend
+cd aura-air-app
 npm install
 # or
 yarn install
