@@ -2,18 +2,23 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
-import { AlertProvider } from "@/contexts/AlertContext";
-import { AlertWrapper } from "@/components/Alerts/AlertWrapper";
+import { ModalProvider } from "@/contexts/ModalContext";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { EmergencyNotificationManager } from "@/components/Emergency/EmergencyNotificationManager/EmergencyNotificationManager";
 import { MobileOptimizedLayout } from "@/components/Mobile/MobileOptimizedLayout/MobileOptimizedLayout";
 import { WallEButton } from "@/components/Chatbot/WallEButton/WallEButton";
 import { Wind } from "lucide-react";
 import { Toaster } from "sonner";
 import "./globals.css";
+import "../styles/chatbot.css";
 
 export const metadata: Metadata = {
   title: "Air Aura",
   description: "App for monitoring air quality with wind-powered insights",
+  icons: {
+    icon: "/airaurealogo.png",
+    apple: "/airaurealogo.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,12 +30,13 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <MobileOptimizedLayout>
-          <AlertProvider>
-            {children}
-            <AlertWrapper />
-            <EmergencyNotificationManager />
-            <WallEButton />
-          </AlertProvider>
+          <LocationProvider>
+            <ModalProvider>
+              {children}
+              <EmergencyNotificationManager />
+              <WallEButton />
+            </ModalProvider>
+          </LocationProvider>
         </MobileOptimizedLayout>
         <Toaster position="top-right" richColors />
         <Analytics />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import { useTheme } from "@/hooks/useTheme";
@@ -20,29 +20,15 @@ export function ThemeToggle({
   const { theme, toggleTheme } = useTheme();
 
   const getIcon = () => {
-    switch (theme) {
-      case "light":
-        return <Sun className="h-4 w-4" />;
-      case "dark":
-        return <Moon className="h-4 w-4" />;
-      case "system":
-        return <Monitor className="h-4 w-4" />;
-      default:
-        return <Sun className="h-4 w-4" />;
-    }
+    return theme === "light" ? (
+      <Sun className="h-4 w-4" />
+    ) : (
+      <Moon className="h-4 w-4" />
+    );
   };
 
   const getTitle = () => {
-    switch (theme) {
-      case "light":
-        return "Modo Claro";
-      case "dark":
-        return "Modo Escuro";
-      case "system":
-        return "Seguir Sistema";
-      default:
-        return "Alternar Tema";
-    }
+    return theme === "light" ? "Modo Claro" : "Modo Escuro";
   };
 
   return (

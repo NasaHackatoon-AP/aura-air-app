@@ -7,14 +7,11 @@ import {
   EmergencyAlert,
   emergencyService,
 } from "@/services/emergencyService";
-import { useAlerts } from "@/contexts/AlertContext";
-
 export function EmergencyNotificationManager() {
   const [notifications, setNotifications] = useState<EmergencyNotification[]>(
     []
   );
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
-  const { showAlerts } = useAlerts();
 
   useEffect(() => {
     // Solicita permissão para notificações
@@ -24,7 +21,9 @@ export function EmergencyNotificationManager() {
     };
 
     requestPermission();
+  }, []);
 
+  useEffect(() => {
     // Adiciona listener para novas notificações
     const removeListener = emergencyService.addListener((notification) => {
       setNotifications((prev) => [notification, ...prev]);
@@ -34,11 +33,9 @@ export function EmergencyNotificationManager() {
         emergencyService.sendPushNotification(notification);
       }
 
-      // Mostra modal de alertas para notificações críticas
+      // Notificações críticas são exibidas como toast
       if (notification.priority === "critical") {
-        setTimeout(() => {
-          showAlerts();
-        }, 1000);
+        console.log("Notificação crítica recebida:", notification);
       }
     });
 
@@ -50,7 +47,8 @@ export function EmergencyNotificationManager() {
       removeListener();
       emergencyService.stopEmergencyMonitoring();
     };
-  }, [isPermissionGranted, showAlerts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPermissionGranted]);
 
   const handleDismissNotification = (notificationId: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
@@ -60,7 +58,6 @@ export function EmergencyNotificationManager() {
   const handleViewDetails = (alert: EmergencyAlert) => {
     // Aqui você pode implementar navegação para detalhes do alerta
     console.log("Visualizar detalhes do alerta:", alert);
-    showAlerts();
   };
 
   // Limita a 3 notificações visíveis por vez

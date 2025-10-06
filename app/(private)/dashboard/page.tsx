@@ -2,39 +2,29 @@
 
 import { WeatherOverview } from "@/components/Weather/WeatherOverview/WeatherOverview";
 import { WeatherForecast } from "@/components/Weather/WeatherForecast/WeatherForecast";
-import { HourlyForecast } from "@/components/Weather/HourlyForecast/HourlyForecast";
 import { WeatherAlerts } from "@/components/Weather/WeatherAlerts/WeatherAlerts";
 import { AirQualityIndex } from "@/components/AirQuality/AirQualityIndex/AirQualityIndex";
 import { Pollutants } from "@/components/AirQuality/Pollutants/Pollutants";
 import { AirQualityHistory } from "@/components/AirQuality/AirQualityHistory/AirQualityHistory";
-import { HealthAlerts } from "@/components/Health/HealthAlerts/HealthAlerts";
-import { HealthProfile } from "@/components/Health/HealthProfile/HealthProfile";
-import { HealthRecommendations } from "@/components/Health/HealthRecommendations/HealthRecommendations";
-import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
+import { PersonalizedHealthCard } from "@/components/Health/PersonalizedHealthCard/PersonalizedHealthCard";
+// import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
-import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
 import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import { ThemeToggle } from "@/components/Theme/ThemeToggle/ThemeToggle";
-import { Button } from "@/components/ui/button";
+import { FloatingDock } from "@/components/ui/floating-dock";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Settings,
   LogOut,
   Satellite,
   User,
-  ChevronDown,
   Wind,
+  Home,
+  Bell,
 } from "lucide-react";
-import Link from "next/link";
+import logo from "../../../public/airaurealogo.png";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { profile } = useUserProfile();
@@ -53,125 +43,76 @@ export default function DashboardPage() {
     }
   };
 
+  const dockItems = [
+    {
+      title: "Início",
+      icon: (
+        <Home className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "/dashboard",
+    },
+    {
+      title: "Satélite",
+      icon: (
+        <Satellite className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "/satellite",
+    },
+    {
+      title: "Sair",
+      icon: (
+        <LogOut className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      onClick: handleLogout,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card relative">
+    <div className="min-h-screen overflow-x-hidden">
+      <header className="border-b bg-card relative overflow-visible">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <Wind className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-foreground truncate">
-                  Air Aura
-                </h1>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                {profile.location}
-              </p>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative">
-              <Link href="/satellite">
-                <TouchOptimizedButton
-                  variant="ghost"
-                  size="icon"
-                  title="Visualização por Satélite"
-                  className="h-7 w-7 sm:h-10 sm:w-10"
-                >
-                  <Satellite className="h-3 w-3 sm:h-5 sm:w-5" />
-                </TouchOptimizedButton>
-              </Link>
-
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative z-50">
               {/* Theme Toggle */}
               <ThemeToggle size="icon" className="h-7 w-7 sm:h-10 sm:w-10" />
-
-              {/* User Profile Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <TouchOptimizedButton
-                    variant="ghost"
-                    className="h-7 w-7 sm:h-10 sm:w-auto sm:px-3 gap-1 sm:gap-2"
-                  >
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-muted flex items-center justify-center">
-                      <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                    </div>
-                    <span className="hidden sm:inline text-sm font-medium">
-                      {profile.name}
-                    </span>
-                    <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:inline" />
-                  </TouchOptimizedButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-56 z-50 sm:align-end align-start"
-                  side="bottom"
-                  sideOffset={4}
-                  alignOffset={-8}
-                  avoidCollisions={true}
-                  collisionPadding={16}
-                >
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {profile.name}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {profile.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Configurações</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer text-red-600"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sair</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-x-hidden">
         <EmergencyNotificationBar radius={100} />
 
-        <AlertNotification />
+        {/* <EmergencyTestPanel /> */}
 
-        <EmergencyTestPanel />
+        {/* 1) Condições atuais */}
+        <WeatherOverview />
 
-        <HealthAlerts />
+        {/* 3) Card Unificado de Saúde */}
+        
 
-        <WeatherAlerts />
-
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
-          <WeatherOverview />
-          <HourlyForecast />
-        </MobileOptimizedGrid>
-
+        {/* 5) Previsão para 7 Dias */}
         <WeatherForecast />
 
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
-          <AirQualityIndex />
-          <HealthProfile />
-        </MobileOptimizedGrid>
+        {/* 6) Alertas Meteorológicos */}
+        <WeatherAlerts />
 
+        {/* 7) Índice de Qualidade do Ar */}
+        <AirQualityIndex />
+
+        {/* 8) Poluentes Atmosféricos */}
         <Pollutants />
 
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 1, desktop: 3 }}>
-          <HealthRecommendations />
-        </MobileOptimizedGrid>
-
+        {/* 9) Histórico de Qualidade do Ar */}
         <AirQualityHistory />
       </main>
+
+      {/* Floating Dock Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-center pb-4 sm:pb-8 pointer-events-none z-50">
+        <div className="pointer-events-auto">
+          <FloatingDock items={dockItems} />
+        </div>
+      </div>
     </div>
   );
 }

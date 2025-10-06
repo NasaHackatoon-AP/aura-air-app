@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function useMobileOptimizations() {
   const [isMobile, setIsMobile] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(0);
+  const isMobileRef = useRef(false);
 
   useEffect(() => {
     // Detecta se é mobile
@@ -17,7 +18,9 @@ export function useMobileOptimizations() {
           userAgent.toLowerCase()
         );
       const isSmallScreen = window.innerWidth <= 768;
-      setIsMobile(isMobileDevice || isSmallScreen);
+      const newIsMobile = isMobileDevice || isSmallScreen;
+      isMobileRef.current = newIsMobile;
+      setIsMobile(newIsMobile);
     };
 
     // Detecta se suporta touch
@@ -35,7 +38,7 @@ export function useMobileOptimizations() {
       const inputs = document.querySelectorAll("input, textarea, select");
       inputs.forEach((input) => {
         input.addEventListener("focus", () => {
-          if (isMobile) {
+          if (isMobileRef.current) {
             (input as HTMLElement).style.fontSize = "16px";
           }
         });
@@ -50,9 +53,23 @@ export function useMobileOptimizations() {
 
     // Otimiza performance de scroll
     const optimizeScroll = () => {
-      if (isMobile) {
-        document.body.style.webkitOverflowScrolling = "touch";
+      if (isMobileRef.current) {
+        (document.body.style as any).webkitOverflowScrolling = "touch";
       }
+    };
+
+    // Handler para resize
+    const handleResize = () => {
+      checkMobile();
+      updateViewportHeight();
+    };
+
+    // Handler para orientação
+    const handleOrientationChange = () => {
+      setTimeout(() => {
+        updateViewportHeight();
+        preventHorizontalScroll();
+      }, 100);
     };
 
     // Inicializa
@@ -63,27 +80,18 @@ export function useMobileOptimizations() {
     optimizeScroll();
 
     // Event listeners
-    window.addEventListener("resize", () => {
-      checkMobile();
-      updateViewportHeight();
-    });
-
-    window.addEventListener("orientationchange", () => {
-      setTimeout(() => {
-        updateViewportHeight();
-        preventHorizontalScroll();
-      }, 100);
-    });
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleOrientationChange);
 
     // Previne zoom em inputs após carregamento
     setTimeout(preventZoom, 1000);
 
     // Cleanup
     return () => {
-      window.removeEventListener("resize", checkMobile);
-      window.removeEventListener("orientationchange", updateViewportHeight);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleOrientationChange);
     };
-  }, [isMobile]);
+  }, []);
 
   return {
     isMobile,
