@@ -7,14 +7,11 @@ import {
   EmergencyAlert,
   emergencyService,
 } from "@/services/emergencyService";
-import { useAlerts } from "@/contexts/AlertContext";
-
 export function EmergencyNotificationManager() {
   const [notifications, setNotifications] = useState<EmergencyNotification[]>(
     []
   );
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
-  const { showAlerts } = useAlerts();
 
   useEffect(() => {
     // Solicita permissão para notificações
@@ -36,11 +33,9 @@ export function EmergencyNotificationManager() {
         emergencyService.sendPushNotification(notification);
       }
 
-      // Mostra modal de alertas para notificações críticas
+      // Notificações críticas são exibidas como toast
       if (notification.priority === "critical") {
-        setTimeout(() => {
-          showAlerts();
-        }, 1000);
+        console.log("Notificação crítica recebida:", notification);
       }
     });
 
@@ -63,7 +58,6 @@ export function EmergencyNotificationManager() {
   const handleViewDetails = (alert: EmergencyAlert) => {
     // Aqui você pode implementar navegação para detalhes do alerta
     console.log("Visualizar detalhes do alerta:", alert);
-    showAlerts();
   };
 
   // Limita a 3 notificações visíveis por vez

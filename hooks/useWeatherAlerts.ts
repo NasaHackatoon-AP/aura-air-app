@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface AirQualityData {
   latitude: number;
@@ -40,19 +41,22 @@ export function useWeatherAlerts({
   autoFetch = true,
   refreshInterval = 10 * 60 * 1000, // 10 minutos
 }: UseWeatherAlertsOptions = {}) {
+  const { location } = useLocation();
   const [alerts, setAlerts] = useState<WeatherAlert[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchWeatherAlerts = useCallback(async () => {
-    console.log(`🔍 useWeatherAlerts: Buscando dados para userId: ${userId}`);
+    console.log(
+      `🔍 useWeatherAlerts: Buscando dados para userId: ${userId} em ${location.city}, ${location.country} (${location.latitude}, ${location.longitude})`
+    );
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `/api/weather-conditions?userId=${userId}&lat=-23.5505&lon=-46.6333`,
+        `/api/weather-conditions?userId=${userId}&lat=${location.latitude}&lon=${location.longitude}`,
         {
           method: "GET",
           headers: {
@@ -253,7 +257,13 @@ export function useWeatherAlerts({
 
       return () => clearInterval(interval);
     }
-  }, [autoFetch, fetchWeatherAlerts, refreshInterval]);
+  }, [
+    autoFetch,
+    fetchWeatherAlerts,
+    refreshInterval,
+    location.latitude,
+    location.longitude,
+  ]);
 
   const getTimeSinceUpdate = () => {
     if (!lastUpdated) return "Nunca";

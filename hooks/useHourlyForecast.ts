@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface AirQualityData {
   latitude: number;
@@ -41,24 +42,31 @@ const DEFAULT_LON = -46.6333; // São Paulo longitude
 
 export function useHourlyForecast({
   userId = 1,
-  lat = DEFAULT_LAT,
-  lon = DEFAULT_LON,
+  lat,
+  lon,
   autoFetch = true,
   refreshInterval = 300000, // 5 minutos
 }: UseHourlyForecastOptions = {}) {
+  const { location } = useLocation();
   const [data, setData] = useState<HourlyForecastData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  // Usar coordenadas do contexto se não fornecidas
+  const currentLat = lat ?? location.latitude;
+  const currentLon = lon ?? location.longitude;
+
   const fetchHourlyForecast = useCallback(async () => {
-    console.log(`🔍 useHourlyForecast: Buscando dados para userId: ${userId}`);
+    console.log(
+      `🔍 useHourlyForecast: Buscando dados para userId: ${userId} em ${location.city}, ${location.country} (${currentLat}, ${currentLon})`
+    );
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `/api/hourly-forecast?userId=${userId}&lat=${lat}&lon=${lon}`,
+        `/api/hourly-forecast?userId=${userId}&lat=${currentLat}&lon=${currentLon}`,
         {
           method: "GET",
           headers: {
@@ -237,7 +245,13 @@ export function useHourlyForecast({
 
       return () => clearInterval(interval);
     }
-  }, [autoFetch, fetchHourlyForecast, refreshInterval]);
+  }, [
+    autoFetch,
+    fetchHourlyForecast,
+    refreshInterval,
+    location.latitude,
+    location.longitude,
+  ]);
 
   const getTimeSinceUpdate = () => {
     if (!lastUpdated) return "Nunca";

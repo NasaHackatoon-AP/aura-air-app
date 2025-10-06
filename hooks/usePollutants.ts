@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "@/contexts/LocationContext";
 
 interface PollutantData {
   nome: string;
@@ -35,19 +36,22 @@ export function usePollutants({
   autoFetch = true,
   refreshInterval = 5 * 60 * 1000, // 5 minutos
 }: UsePollutantsOptions = {}) {
+  const { location } = useLocation();
   const [data, setData] = useState<AirQualityData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchPollutants = async () => {
-    console.log(`🔍 usePollutants: Buscando dados para userId: ${userId}`);
+  const fetchPollutants = useCallback(async () => {
+    console.log(
+      `🔍 usePollutants: Buscando dados para userId: ${userId} em ${location.city}, ${location.country} (${location.latitude}, ${location.longitude})`
+    );
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `https://gustavo-production-08e9.up.railway.app/airmonitor/monitor/aqi?lat=-23.5505&lon=-46.6333&usuario_id=${userId}`,
+        `https://gustavo-production-08e9.up.railway.app/airmonitor/monitor/aqi?lat=${location.latitude}&lon=${location.longitude}&usuario_id=${userId}`,
         {
           method: "GET",
           headers: {
@@ -81,14 +85,26 @@ export function usePollutants({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [
+    userId,
+    location.latitude,
+    location.longitude,
+    location.city,
+    location.country,
+  ]);
 
-  // Auto-fetch quando o componente monta ou userId muda
+  // Auto-fetch quando o componente monta, userId muda ou localização muda
   useEffect(() => {
     if (autoFetch && userId) {
       fetchPollutants();
     }
-  }, [userId, autoFetch]);
+  }, [
+    userId,
+    autoFetch,
+    location.latitude,
+    location.longitude,
+    fetchPollutants,
+  ]);
 
   // Auto-refresh em intervalos regulares
   useEffect(() => {

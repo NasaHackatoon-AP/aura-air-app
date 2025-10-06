@@ -5,14 +5,20 @@ import {
 
 const aqiForecastService = {
   // Buscar previsão de AQI para um usuário
-  getForecast: async (userId: number): Promise<AQIForecastResponseExtended> => {
+  getForecast: async (
+    userId: number,
+    latitude: number = -23.5505,
+    longitude: number = -46.6333,
+    locationState?: string,
+    locationCity?: string
+  ): Promise<AQIForecastResponseExtended> => {
     console.log(
-      `🔍 aqiForecastService: Fazendo requisição direta para API externa que funciona`
+      `🔍 aqiForecastService: Fazendo requisição para API externa em ${latitude}, ${longitude}`
     );
 
     // Usar endpoint que funciona: /airmonitor/monitor/aqi
     const res = await fetch(
-      `https://gustavo-production-08e9.up.railway.app/airmonitor/monitor/aqi?lat=-23.5505&lon=-46.6333&usuario_id=${userId}`,
+      `https://gustavo-production-08e9.up.railway.app/airmonitor/monitor/aqi?lat=${latitude}&lon=${longitude}&usuario_id=${userId}`,
       {
         method: "GET",
         headers: {
@@ -47,7 +53,12 @@ const aqiForecastService = {
     console.log("✅ aqiForecastService: Dados recebidos com sucesso:", data);
 
     // Transformar resposta do endpoint que funciona para o formato esperado
-    const transformedData = transformMonitorResponseToForecast(data, userId);
+    const transformedData = transformMonitorResponseToForecast(
+      data,
+      userId,
+      locationState,
+      locationCity
+    );
     console.log("🔄 aqiForecastService: Dados transformados:", transformedData);
     return transformedData;
   },
@@ -56,7 +67,9 @@ const aqiForecastService = {
 // Função para transformar resposta do monitor para formato de previsão
 function transformMonitorResponseToForecast(
   monitorData: any,
-  userId: number
+  userId: number,
+  locationState?: string,
+  locationCity?: string
 ): AQIForecastResponseExtended {
   const today = new Date();
   const forecast = [];
@@ -126,8 +139,8 @@ function transformMonitorResponseToForecast(
 
   return {
     usuario_id: userId,
-    cidade: monitorData.clima?.cidade || "São Paulo",
-    estado: "SP",
+    cidade: locationCity || monitorData.clima?.cidade || "São Paulo",
+    estado: locationState || "SP",
     coordenadas: {
       latitude: monitorData.latitude || -23.5505,
       longitude: monitorData.longitude || -46.6333,

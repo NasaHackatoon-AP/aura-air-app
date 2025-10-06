@@ -18,7 +18,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAlerts } from "@/contexts/AlertContext";
 import { loginUser as loginService } from "@/services/serviceUser";
 import {
   AlertDialog,
@@ -33,7 +32,6 @@ import {
 
 export function LoginForm() {
   const router = useRouter();
-  const { loginUser: alertsLoginUser } = useAlerts();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -52,32 +50,24 @@ export function LoginForm() {
         return;
       }
 
-  const res = await loginService({ email, senha: password });
+      const res = await loginService({ email, senha: password });
 
-  // Expecting { access_token, token_type, usuario }
-  const token = (res as any)?.data?.access_token;
+      // Expecting { access_token, token_type, usuario }
+      const token = (res as any)?.data?.access_token;
       if (token) {
         // Save token for API calls
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
         // set a cookie so middleware can read it (not HttpOnly)
         document.cookie = `access_token=${token}; path=/; samesite=lax`;
 
+        // Login successful - redirect to dashboard
 
-        // Optionally call alerts flow from context if available
-        try {
-          const userLocation = { latitude: -23.5505, longitude: -46.6333, city: 'São Paulo', state: 'SP', country: 'Brasil' };
-          const healthConditions: string[] = [];
-          if (alertsLoginUser) await alertsLoginUser(userLocation, healthConditions);
-        } catch (e) {
-          // ignore if alerts context not available
-        }
-
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
         setIsErrorDialogOpen(true);
       }
     } catch (err: any) {
-      console.error('Erro no login:', err);
+      console.error("Erro no login:", err);
       // Show modal with incorrect credentials message
       setIsErrorDialogOpen(true);
       setIsLoading(false);
@@ -105,16 +95,24 @@ export function LoginForm() {
           )}
 
           {isErrorDialogOpen && (
-            <AlertDialog open={isErrorDialogOpen} onOpenChange={(open) => setIsErrorDialogOpen(open)}>
+            <AlertDialog
+              open={isErrorDialogOpen}
+              onOpenChange={(open) => setIsErrorDialogOpen(open)}
+            >
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Erro ao entrar</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Usuário ou senha incorretos. Verifique suas credenciais e tente novamente.
+                    Usuário ou senha incorretos. Verifique suas credenciais e
+                    tente novamente.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setIsErrorDialogOpen(false)}>Fechar</AlertDialogCancel>
+                  <AlertDialogCancel
+                    onClick={() => setIsErrorDialogOpen(false)}
+                  >
+                    Fechar
+                  </AlertDialogCancel>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

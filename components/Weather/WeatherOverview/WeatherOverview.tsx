@@ -16,6 +16,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useCurrentWeather } from "@/hooks/useCurrentWeather";
+import { BrazilCitySelector } from "../BrazilCitySelector/BrazilCitySelector";
+import { useLocation } from "@/contexts/LocationContext";
 import { useState } from "react";
 
 // Mock user ID - em produção, viria do contexto de autenticação
@@ -23,15 +25,21 @@ const MOCK_USER_ID = 1;
 
 export function WeatherOverview() {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { location, updateLocation: updateGlobalLocation } = useLocation();
 
   const {
     data,
     isLoading,
     error,
     fetchCurrentWeather,
+    updateLocation,
     hasData,
     getTimeSinceUpdate,
-  } = useCurrentWeather({ userId: MOCK_USER_ID });
+  } = useCurrentWeather({
+    userId: MOCK_USER_ID,
+    latitude: location.latitude,
+    longitude: location.longitude,
+  });
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -40,6 +48,25 @@ export function WeatherOverview() {
     } finally {
       setIsRefreshing(false);
     }
+  };
+
+  const handleLocationChange = (
+    city: string,
+    state: string,
+    stateName: string,
+    region: string,
+    lat: number,
+    lon: number
+  ) => {
+    console.log(
+      `🌍 WeatherOverview: Mudando localização para ${city}, ${state} (${stateName}) - ${lat}, ${lon}`
+    );
+
+    // Atualizar localização global com dados da cidade brasileira selecionada
+    updateGlobalLocation(city, state, "Brasil", "BR", lat, lon);
+
+    // Atualizar dados meteorológicos
+    updateLocation(lat, lon);
   };
 
   if (isLoading && !hasData) {
@@ -171,6 +198,200 @@ export function WeatherOverview() {
     return "Extremo";
   };
 
+  const getCountryFlag = (countryCode: string) => {
+    const flagEmojis: { [key: string]: string } = {
+      BR: "🇧🇷",
+      US: "🇺🇸",
+      CA: "🇨🇦",
+      MX: "🇲🇽",
+      AR: "🇦🇷",
+      CL: "🇨🇱",
+      CO: "🇨🇴",
+      PE: "🇵🇪",
+      UY: "🇺🇾",
+      PY: "🇵🇾",
+      BO: "🇧🇴",
+      VE: "🇻🇪",
+      GY: "🇬🇾",
+      SR: "🇸🇷",
+      GF: "🇬🇫",
+      FR: "🇫🇷",
+      DE: "🇩🇪",
+      GB: "🇬🇧",
+      ES: "🇪🇸",
+      IT: "🇮🇹",
+      PT: "🇵🇹",
+      NL: "🇳🇱",
+      BE: "🇧🇪",
+      CH: "🇨🇭",
+      AT: "🇦🇹",
+      SE: "🇸🇪",
+      NO: "🇳🇴",
+      DK: "🇩🇰",
+      FI: "🇫🇮",
+      PL: "🇵🇱",
+      CZ: "🇨🇿",
+      HU: "🇭🇺",
+      RO: "🇷🇴",
+      BG: "🇧🇬",
+      HR: "🇭🇷",
+      SI: "🇸🇮",
+      SK: "🇸🇰",
+      EE: "🇪🇪",
+      LV: "🇱🇻",
+      LT: "🇱🇹",
+      IE: "🇮🇪",
+      IS: "🇮🇸",
+      LU: "🇱🇺",
+      MT: "🇲🇹",
+      CY: "🇨🇾",
+      GR: "🇬🇷",
+      TR: "🇹🇷",
+      RU: "🇷🇺",
+      UA: "🇺🇦",
+      BY: "🇧🇾",
+      MD: "🇲🇩",
+      GE: "🇬🇪",
+      AM: "🇦🇲",
+      AZ: "🇦🇿",
+      KZ: "🇰🇿",
+      UZ: "🇺🇿",
+      KG: "🇰🇬",
+      TJ: "🇹🇯",
+      TM: "🇹🇲",
+      AF: "🇦🇫",
+      PK: "🇵🇰",
+      IN: "🇮🇳",
+      BD: "🇧🇩",
+      LK: "🇱🇰",
+      NP: "🇳🇵",
+      BT: "🇧🇹",
+      MV: "🇲🇻",
+      CN: "🇨🇳",
+      JP: "🇯🇵",
+      KR: "🇰🇷",
+      KP: "🇰🇵",
+      MN: "🇲🇳",
+      TW: "🇹🇼",
+      HK: "🇭🇰",
+      MO: "🇲🇴",
+      SG: "🇸🇬",
+      MY: "🇲🇾",
+      TH: "🇹🇭",
+      VN: "🇻🇳",
+      LA: "🇱🇦",
+      KH: "🇰🇭",
+      MM: "🇲🇲",
+      ID: "🇮🇩",
+      PH: "🇵🇭",
+      BN: "🇧🇳",
+      TL: "🇹🇱",
+      AU: "🇦🇺",
+      NZ: "🇳🇿",
+      FJ: "🇫🇯",
+      PG: "🇵🇬",
+      SB: "🇸🇧",
+      VU: "🇻🇺",
+      NC: "🇳🇨",
+      PF: "🇵🇫",
+      WS: "🇼🇸",
+      TO: "🇹🇴",
+      KI: "🇰🇮",
+      TV: "🇹🇻",
+      NR: "🇳🇷",
+      FM: "🇫🇲",
+      MH: "🇲🇭",
+      PW: "🇵🇼",
+      AS: "🇦🇸",
+      GU: "🇬🇺",
+      MP: "🇲🇵",
+      VI: "🇻🇮",
+      PR: "🇵🇷",
+      ZA: "🇿🇦",
+      EG: "🇪🇬",
+      LY: "🇱🇾",
+      TN: "🇹🇳",
+      DZ: "🇩🇿",
+      MA: "🇲🇦",
+      SD: "🇸🇩",
+      SS: "🇸🇸",
+      ET: "🇪🇹",
+      ER: "🇪🇷",
+      DJ: "🇩🇯",
+      SO: "🇸🇴",
+      KE: "🇰🇪",
+      UG: "🇺🇬",
+      TZ: "🇹🇿",
+      RW: "🇷🇼",
+      BI: "🇧🇮",
+      MW: "🇲🇼",
+      ZM: "🇿🇲",
+      ZW: "🇿🇼",
+      BW: "🇧🇼",
+      NA: "🇳🇦",
+      SZ: "🇸🇿",
+      LS: "🇱🇸",
+      MZ: "🇲🇿",
+      MG: "🇲🇬",
+      MU: "🇲🇺",
+      SC: "🇸🇨",
+      KM: "🇰🇲",
+      YT: "🇾🇹",
+      RE: "🇷🇪",
+      ZA: "🇿🇦",
+      GH: "🇬🇭",
+      TG: "🇹🇬",
+      BJ: "🇧🇯",
+      NE: "🇳🇪",
+      BF: "🇧🇫",
+      ML: "🇲🇱",
+      SN: "🇸🇳",
+      GM: "🇬🇲",
+      GW: "🇬🇼",
+      GN: "🇬🇳",
+      SL: "🇸🇱",
+      LR: "🇱🇷",
+      CI: "🇨🇮",
+      GH: "🇬🇭",
+      TG: "🇹🇬",
+      BJ: "🇧🇯",
+      NE: "🇳🇪",
+      BF: "🇧🇫",
+      ML: "🇲🇱",
+      SN: "🇸🇳",
+      GM: "🇬🇲",
+      GW: "🇬🇼",
+      GN: "🇬🇳",
+      SL: "🇸🇱",
+      LR: "🇱🇷",
+      CI: "🇨🇮",
+      NG: "🇳🇬",
+      CM: "🇨🇲",
+      TD: "🇹🇩",
+      CF: "🇨🇫",
+      CD: "🇨🇩",
+      CG: "🇨🇬",
+      GA: "🇬🇦",
+      GQ: "🇬🇶",
+      ST: "🇸🇹",
+      AO: "🇦🇴",
+      NA: "🇳🇦",
+      ZA: "🇿🇦",
+      BW: "🇧🇼",
+      SZ: "🇸🇿",
+      LS: "🇱🇸",
+      MZ: "🇲🇿",
+      MG: "🇲🇬",
+      MU: "🇲🇺",
+      SC: "🇸🇨",
+      KM: "🇰🇲",
+      YT: "🇾🇹",
+      RE: "🇷🇪",
+    };
+
+    return flagEmojis[countryCode] || "🏳️";
+  };
+
   return (
     <Card className="col-span-full">
       <CardHeader className="pb-4">
@@ -185,25 +406,61 @@ export function WeatherOverview() {
               Última atualização: {getTimeSinceUpdate()}
             </p>
           </div>
-          <Button
-            onClick={handleRefresh}
-            disabled={isRefreshing || isLoading}
-            variant="outline"
-            size="sm"
-            title="Atualizar condições atuais"
-            className="hover:bg-gray-50"
-          >
-            {isRefreshing || isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
+          <div className="flex items-center gap-2">
+            {data && (
+              <BrazilCitySelector
+                currentCity={data.city}
+                currentState={data.state}
+                onLocationChange={handleLocationChange}
+              />
             )}
-          </Button>
+            <Button
+              onClick={handleRefresh}
+              disabled={isRefreshing || isLoading}
+              variant="outline"
+              size="sm"
+              title="Atualizar condições atuais"
+              className="hover:bg-gray-50"
+            >
+              {isRefreshing || isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-start justify-between mb-4 sm:mb-6">
           <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-primary">
+                {data.city}
+              </h2>
+              <span className="text-sm sm:text-base text-muted-foreground font-medium">
+                {data.state}
+              </span>
+              <div className="flex items-center gap-1">
+                <img
+                  src={`https://flagcdn.com/w20/${data.countryCode.toLowerCase()}.png`}
+                  alt={`Bandeira do ${data.country}`}
+                  className="w-5 h-3 sm:w-6 sm:h-4 rounded-sm object-cover"
+                  onError={(e) => {
+                    // Fallback para emoji da bandeira se a imagem falhar
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.nextElementSibling!.style.display =
+                      "inline";
+                  }}
+                />
+                <span
+                  className="text-lg sm:text-xl"
+                  style={{ display: "none" }}
+                >
+                  {getCountryFlag(data.countryCode)}
+                </span>
+              </div>
+            </div>
             <div className="text-3xl sm:text-4xl lg:text-5xl font-bold">
               {data.temperature}°C
             </div>
@@ -213,7 +470,6 @@ export function WeatherOverview() {
             <p className="text-base sm:text-lg mt-2 truncate">
               {data.condition}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">{data.city}</p>
           </div>
           {getWeatherIcon(data.condition)}
         </div>

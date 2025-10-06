@@ -2,7 +2,6 @@
 
 import { WeatherOverview } from "@/components/Weather/WeatherOverview/WeatherOverview";
 import { WeatherForecast } from "@/components/Weather/WeatherForecast/WeatherForecast";
-import { HourlyForecast } from "@/components/Weather/HourlyForecast/HourlyForecast";
 import { WeatherAlerts } from "@/components/Weather/WeatherAlerts/WeatherAlerts";
 import { AirQualityIndex } from "@/components/AirQuality/AirQualityIndex/AirQualityIndex";
 import { Pollutants } from "@/components/AirQuality/Pollutants/Pollutants";
@@ -10,7 +9,6 @@ import { AirQualityHistory } from "@/components/AirQuality/AirQualityHistory/Air
 import { PersonalizedHealthCard } from "@/components/Health/PersonalizedHealthCard/PersonalizedHealthCard";
 // import { EmergencyTestPanel } from "@/components/Emergency/EmergencyTestPanel/EmergencyTestPanel";
 import { EmergencyNotificationBar } from "@/components/Emergency/EmergencyNotificationBar/EmergencyNotificationBar";
-import { AlertNotification } from "@/components/Alerts/AlertNotification/AlertNotification";
 import { MobileOptimizedGrid } from "@/components/Mobile/MobileOptimizedGrid/MobileOptimizedGrid";
 import { TouchOptimizedButton } from "@/components/Mobile/TouchOptimizedButton/TouchOptimizedButton";
 import { ThemeToggle } from "@/components/Theme/ThemeToggle/ThemeToggle";
@@ -91,8 +89,6 @@ export default function DashboardPage() {
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 relative z-50">
               {/* Theme Toggle */}
               <ThemeToggle size="icon" className="h-7 w-7 sm:h-10 sm:w-10" />
-
-            
             </div>
           </div>
         </div>
@@ -100,15 +96,11 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-x-hidden">
         <EmergencyNotificationBar radius={100} />
-        <AlertNotification />
 
         {/* <EmergencyTestPanel /> */}
 
-        {/* 1) Condições atuais + 2) Previsão horária */}
-        <MobileOptimizedGrid cols={{ mobile: 1, tablet: 2, desktop: 3 }}>
-          <WeatherOverview />
-          <HourlyForecast />
-        </MobileOptimizedGrid>
+        {/* 1) Condições atuais */}
+        <WeatherOverview />
 
         {/* 3) Card Unificado de Saúde */}
         <PersonalizedHealthCard userId={1} />
