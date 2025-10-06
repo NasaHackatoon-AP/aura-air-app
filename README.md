@@ -180,7 +180,7 @@ NEXT_PUBLIC_API_URL=https://your-backend-url.com
 ### 4. Database Setup
 
 ```bash
-# Configure MySQL and credentials in backend .env
+# Configure MySQL and credentials in gustavo .env
 # Run migrations if needed:
 # python -m alembic upgrade head
 ```
@@ -220,12 +220,12 @@ docker-compose up -d --build
 ### Individual Docker Commands
 
 ```bash
-cd backend
+cd gustavo
 docker build -t aura-air-backend .
 docker run -p 8000:8000 aura-air-backend
 
-cd ../frontend
-docker build -t aura-air-frontend .
+cd ../aura-air-app
+docker build -t aura-air-app-frontend .
 docker run -p 3000:3000 aura-air-frontend
 ```
 
@@ -250,7 +250,7 @@ docker run -p 3000:3000 aura-air-frontend
 2. **Set build options**:
 
    * Build command: `npm run build`
-   * Publish directory: `frontend/.next`
+   * Publish directory: `aura-air-app/.next`
 3. **Set environment variables**:
 
    ```env
